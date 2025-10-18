@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academia BROCAT - Gestión de Horarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-scissors"></i> BROCAT
+            </a>
+            <div class="navbar-nav">
+                <a href="/login" class="btn btn-outline-light">
+                    <i class="bi bi-shield-lock"></i> Acceso Administrador
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Mensaje de bienvenida principal -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="text-center">
+                    <h1 class="display-4 text-primary mb-3">
+                        <i class="bi bi-scissors"></i> BROCAT
+                    </h1>
+                    <p class="lead text-muted">
+                        <i class="bi bi-thread"></i> Donde la creatividad se convierte en arte
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dos opciones principales -->
+        <div class="row g-4">
+            <!-- Academia de Costura BROCAT -->
+            <div class="col-lg-6">
+                <div class="card h-100 border-success shadow-lg">
+                    <div class="card-header bg-success text-white text-center">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-mortarboard"></i> Academia de Costura BROCAT
+                        </h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="card-text lead">
+                            <i class="bi bi-calendar-check"></i> Cursos regulares y clases programadas
+                        </p>
+                        <p class="card-text mb-4">
+                            Gestiona tus clases, horarios y recuperaciones de forma sencilla y eficiente.
+                        </p>
+                        
+                        <div class="d-grid gap-3">
+                            <a href="/alumno/login" class="btn btn-success btn-lg">
+                                <i class="bi bi-person-circle"></i> Acceso Alumnos
+                            </a>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-info-circle"></i> Como Alumno puedes:
+                                        </h6>
+                                        <ul class="list-unstyled small text-start">
+                                            <li><i class="bi bi-check-circle text-success"></i> Consultar tus horarios de clases</li>
+                                            <li><i class="bi bi-check-circle text-success"></i> Marcar tus ausencias</li>
+                                            <li><i class="bi bi-check-circle text-success"></i> Recuperar clases perdidas</li>
+                                            <li><i class="bi bi-check-circle text-success"></i> Ver tu calendario mensual</li>
+                                        </ul>
+                                        <small class="text-muted">
+                                            <i class="bi bi-key"></i> Usa tu nombre y DNI para acceder
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Atelier BROCAT - CITA PREVIA -->
+            <div class="col-lg-6">
+                <div class="card h-100 border-warning shadow-lg">
+                    <div class="card-header bg-warning text-dark text-center">
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-calendar2-heart"></i> Atelier BROCAT
+                        </h3>
+                        <h5 class="text-uppercase fw-bold mt-1">CITA PREVIA</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="card-text lead">
+                            <i class="bi bi-clock"></i> Servicios personalizados y exclusivos
+                        </p>
+                        <p class="card-text mb-4">
+                            Reserva tu cita para servicios de costura personalizada, arreglos y proyectos especiales.
+                        </p>
+                        
+                        <div class="d-grid gap-3">
+                            <a href="/cita-previa" class="btn btn-warning btn-lg text-dark fw-bold">
+                                <i class="bi bi-calendar-plus"></i> Solicitar Cita Previa
+                            </a>
+                            <a href="/cita-previa/consultar" class="btn btn-outline-warning btn-lg">
+                                <i class="bi bi-search"></i> Consultar Mi Cita
+                            </a>
+                        </div>
+                        
+                        <!-- Información adicional -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="bi bi-star"></i> Servicios Disponibles
+                                        </h6>
+                                        <ul class="list-unstyled small text-start">
+                                            <li><i class="bi bi-scissors text-warning"></i> Arreglos y ajustes</li>
+                                            <li><i class="bi bi-scissors text-warning"></i> Costura personalizada</li>
+                                            <li><i class="bi bi-scissors text-warning"></i> Proyectos especiales</li>
+                                            <li><i class="bi bi-scissors text-warning"></i> Consultoría de diseño</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información para Administradores -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="alert alert-info text-center" role="alert">
+                    <h5 class="alert-heading">
+                        <i class="bi bi-gear"></i> ¿Eres Administrador?
+                    </h5>
+                    <p class="mb-2">
+                        <i class="bi bi-arrow-up"></i> Usa el botón <strong>"Acceso Administrador"</strong> en la barra superior
+                    </p>
+                    <p class="mb-0 small text-muted">
+                        <i class="bi bi-tools"></i> Gestiona alumnos, profesores, cursos, horarios y el sistema completo
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

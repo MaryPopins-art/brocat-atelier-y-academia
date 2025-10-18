@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Citas - Atelier BROCAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container-fluid">
+            <a class="navbar-brand text-dark" href="/">
+                <i class="bi bi-scissors"></i> Atelier BROCAT - MIS CITAS
+            </a>
+            <a href="/" class="btn btn-outline-dark">
+                <i class="bi bi-house"></i> Volver al Inicio
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning text-center" role="alert">
+                    <h2 class="alert-heading">
+                        <i class="bi bi-calendar-week"></i> Mis Citas
+                    </h2>
+                    <p class="lead mb-0" th:if="${nombreBuscado}">
+                        <i class="bi bi-person"></i> Citas encontradas para: <strong th:text="${nombreBuscado}">Cliente</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista de citas -->
+        <div class="row" th:if="${citas != null and !citas.empty}">
+            <div class="col-12">
+                <div th:each="cita : ${citas}" class="card mb-3 shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center" 
+                         th:classappend="${cita.estado == 'CONFIRMADA'} ? 'bg-success text-white' : 'bg-secondary text-white'">
+                        <h5 class="mb-0">
+                            <i class="bi bi-calendar-check"></i> Cita #<span th:text="${cita.id}">ID</span>
+                        </h5>
+                        <span class="badge" 
+                              th:classappend="${cita.estado == 'CONFIRMADA'} ? 'bg-light text-success' : 'bg-light text-secondary'"
+                              th:text="${cita.estado}">Estado</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Información básica -->
+                            <div class="col-lg-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-tags"></i> Servicio Solicitado
+                                </h6>
+                                <p class="fw-bold text-primary mb-2" th:text="${cita.tipoServicioFormateado}">Tipo Servicio</p>
+                                
+                                <h6 class="text-muted">
+                                    <i class="bi bi-calendar3"></i> Fecha Solicitada
+                                </h6>
+                                <p class="fw-bold text-warning mb-2" th:text="${cita.fechaPreferidaFormateada}">Fecha</p>
+                                
+                                <h6 class="text-muted">
+                                    <i class="bi bi-clock"></i> Horario Preferido
+                                </h6>
+                                <p class="fw-bold text-info mb-2" th:text="${cita.horaPreferidaFormateada}">Horario</p>
+                            </div>
+                            
+                            <!-- Detalles del trabajo -->
+                            <div class="col-lg-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-card-text"></i> Descripción del Trabajo
+                                </h6>
+                                <p class="border p-2 bg-light rounded small" th:text="${cita.descripcion}">Descripción</p>
+                                
+                                <!-- Observaciones si las hay -->
+                                <div th:if="${cita.observaciones != null and !cita.observaciones.isEmpty()}">
+                                    <h6 class="text-muted">
+                                        <i class="bi bi-chat-square-text"></i> Observaciones
+                                    </h6>
+                                    <p class="border p-2 bg-light rounded small" th:text="${cita.observaciones}">Observaciones</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Información de contacto y solicitud -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-light mb-0">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                <i class="bi bi-telephone"></i> <strong>Teléfono:</strong> <span th:text="${cita.telefono}">Teléfono</span>
+                                            </small><br>
+                                            <small class="text-muted" th:if="${cita.email != null and !cita.email.isEmpty()}">
+                                                <i class="bi bi-envelope"></i> <strong>Email:</strong> <span th:text="${cita.email}">Email</span>
+                                            </small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                <i class="bi bi-clock-history"></i> <strong>Solicitada el:</strong> <span th:text="${cita.fechaSolicitudFormateada}">Fecha solicitud</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mensaje si no hay citas -->
+        <div class="row" th:if="${citas == null or citas.empty}">
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <h4><i class="bi bi-calendar-x"></i> No se encontraron citas</h4>
+                    <p>No hay citas registradas con los datos proporcionados.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Acciones -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="/cita-previa/consultar" class="btn btn-outline-warning">
+                        <i class="bi bi-search"></i> Nueva Búsqueda
+                    </a>
+                    <a href="/cita-previa" class="btn btn-warning text-dark">
+                        <i class="bi bi-plus-circle"></i> Solicitar Nueva Cita
+                    </a>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Volver al Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Información de contacto -->
+        <div class="row mt-4">
+            <div class="col-lg-8 mx-auto">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="bi bi-telephone-fill"></i> ¿Necesitas hacer cambios?
+                        </h5>
+                        <p class="card-text">
+                            Si necesitas modificar o cancelar alguna cita, contáctanos directamente:
+                        </p>
+                        <p class="card-text">
+                            <strong>Teléfono: XXX XXX XXX</strong><br>
+                            <small class="text-muted">Horario: Lunes a Viernes 9:00 - 19:00</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

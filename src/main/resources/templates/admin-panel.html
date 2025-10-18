@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Panel de Administración</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Panel de Administración</h2>
+        <div>
+            <span class="badge bg-success">Sesión activa</span>
+        </div>
+    </div>
+    
+    <!-- Pestañas para las diferentes secciones -->
+    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="alumnos-tab" data-bs-toggle="tab" data-bs-target="#alumnos" type="button" role="tab">
+                Alumnos <span class="badge bg-secondary ms-1" th:text="${#lists.size(alumnos)}"></span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profesores-tab" data-bs-toggle="tab" data-bs-target="#profesores" type="button" role="tab">
+                Profesores <span class="badge bg-secondary ms-1" th:text="${#lists.size(profesores)}"></span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#cursos" type="button" role="tab">
+                Cursos <span class="badge bg-secondary ms-1" th:text="${#lists.size(cursos)}"></span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabsContent">
+        <!-- Pestaña de Alumnos -->
+        <div class="tab-pane fade show active" id="alumnos" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <h4>Lista de Alumnos</h4>
+                <a href="/admin/alumnos/nuevo" class="btn btn-success">+ Nuevo Alumno</a>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Teléfono</th>
+                        <th>DNI</th>
+                        <th>Curso</th>
+                        <th>Profesor</th>
+                        <th>Clases No Asistidas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="alumno : ${alumnos}">
+                        <td th:text="${alumno.nombre}"></td>
+                        <td th:text="${alumno.apellidos}"></td>
+                        <td th:text="${alumno.telefono}"></td>
+                        <td th:text="${alumno.dni}"></td>
+                        <td th:text="${alumno.curso}"></td>
+                        <td th:text="${alumno.profesor}"></td>
+                        <td class="text-center">
+                            <span class="badge bg-warning" th:text="${ausenciasDinamicas[alumno.id]}"></span>
+                            <small class="text-muted d-block">ausencias actuales</small>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/alumnos/borrar/{id}(id=${alumno.id})}" 
+                               class="btn btn-danger btn-sm" 
+                               onclick="return confirm('¿Estás seguro de que quieres eliminar este alumno?')">
+                                Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(alumnos)}">
+                        <td colspan="8" class="text-center text-muted">No hay alumnos registrados</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pestaña de Profesores -->
+        <div class="tab-pane fade" id="profesores" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <h4>Lista de Profesores</h4>
+                <a href="/admin/profesores/nuevo" class="btn btn-primary">+ Nuevo Profesor</a>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="25%">Profesor</th>
+                        <th width="20%">Contacto</th>
+                        <th width="30%">Cursos Asignados</th>
+                        <th width="20%">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="profesor : ${profesores}">
+                        <td>
+                            <span class="badge bg-secondary" th:text="${profesor.id}"></span>
+                        </td>
+                        <td>
+                            <div>
+                                <strong th:text="${profesor.nombre + ' ' + (profesor.apellidos ?: '')}"></strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div th:if="${profesor.email != null and !profesor.email.isEmpty()}">
+                                <small><i class="bi bi-envelope"></i> <span th:text="${profesor.email}"></span></small>
+                            </div>
+                            <div th:if="${profesor.telefono != null and !profesor.telefono.isEmpty()}">
+                                <small><i class="bi bi-telephone"></i> <span th:text="${profesor.telefono}"></span></small>
+                            </div>
+                        </td>
+                        <td>
+                            <div th:if="${profesor.cursos != null and !profesor.cursos.isEmpty()}">
+                                <div th:each="curso, iterStat : ${#strings.listSplit(profesor.cursos, ',')}" 
+                                     class="mb-1">
+                                    <div class="d-flex align-items-center">
+                                        <span class="badge bg-primary me-2" 
+                                              th:text="${#strings.trim(curso)}"></span>
+                                        <small class="text-muted" 
+                                               th:text="${cursosConHorarios[#strings.trim(curso)]}"></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted" th:if="${profesor.cursos == null or profesor.cursos.isEmpty()}">
+                                <i class="bi bi-exclamation-triangle"></i> Sin cursos asignados
+                            </small>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/profesores/editar/{id}(id=${profesor.id})}" 
+                               class="btn btn-outline-primary btn-sm me-1" title="Editar profesor">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a th:href="@{/admin/profesores/borrar/{id}(id=${profesor.id})}" 
+                               class="btn btn-danger btn-sm" 
+                               onclick="return confirm('¿Estás seguro de que quieres eliminar este profesor?')">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(profesores)}">
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="bi bi-person display-4 text-muted"></i><br>
+                            No hay profesores registrados<br>
+                            <small>Haz clic en "+ Nuevo Profesor" para añadir el primero</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pestaña de Cursos -->
+        <div class="tab-pane fade" id="cursos" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <h4>Lista de Cursos</h4>
+                <a href="/admin/cursos/nuevo" class="btn btn-warning">+ Nuevo Curso</a>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th width="5%">ID</th>
+                        <th width="35%">Nombre del Curso</th>
+                        <th width="25%">Horario</th>
+                        <th width="15%">Alumnos</th>
+                        <th width="20%">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="curso : ${cursos}">
+                        <td>
+                            <span class="badge bg-secondary" th:text="${curso.id}"></span>
+                        </td>
+                        <td>
+                            <strong th:text="${curso.nombre}"></strong>
+                        </td>
+                        <td>
+                            <i class="bi bi-clock"></i>
+                            <span th:text="${curso.horario}"></span>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <span class="badge bg-info me-2">
+                                    <i class="bi bi-people"></i>
+                                    <span th:text="${contadorAlumnosPorCurso[curso.nombre]}"></span>
+                                </span>
+                                <div class="progress flex-grow-1" style="height: 12px; max-width: 80px;">
+                                    <div class="progress-bar bg-info" 
+                                         th:style="'width: ' + ${#strings.substringBefore(contadorAlumnosPorCurso[curso.nombre], '/')} + '0%'">
+                                    </div>
+                                </div>
+                            </div>
+                            <small class="text-muted">máx. 10</small>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/cursos/editar/{id}(id=${curso.id})}" 
+                               class="btn btn-outline-primary btn-sm me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <a th:href="@{/admin/cursos/borrar/{id}(id=${curso.id})}" 
+                               class="btn btn-danger btn-sm" 
+                               onclick="return confirm('¿Estás seguro de que quieres eliminar este curso?')">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(cursos)}">
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="bi bi-book display-4 text-muted"></i><br>
+                            No hay cursos registrados<br>
+                            <small>Haz clic en "+ Nuevo Curso" para añadir el primero</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <!-- Información adicional -->
+            <div class="alert alert-info mt-3" th:if="${!#lists.isEmpty(cursos)}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <i class="bi bi-book"></i>
+                        <strong>Total de cursos:</strong> 
+                        <span th:text="${#lists.size(cursos)}"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <i class="bi bi-people"></i>
+                        <strong>Capacidad total:</strong> 
+                        <span th:text="${#lists.size(cursos)} * 10"></span> alumnos máximo
+                    </div>
+                </div>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Cada curso tiene un límite de 10 alumnos por grupo
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para Bootstrap tabs -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+</body>
+</html>

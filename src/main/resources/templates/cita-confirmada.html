@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cita Confirmada - Atelier BROCAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="/">
+                <i class="bi bi-scissors"></i> Atelier BROCAT - CITA CONFIRMADA
+            </a>
+            <a href="/" class="btn btn-outline-light">
+                <i class="bi bi-house"></i> Volver al Inicio
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Mensaje de éxito -->
+        <div class="row mb-4" th:if="${mensaje == 'success'}">
+            <div class="col-12">
+                <div class="alert alert-success text-center alert-dismissible fade show" role="alert">
+                    <h2 class="alert-heading">
+                        <i class="bi bi-check-circle-fill"></i> ¡Cita Confirmada con Éxito!
+                    </h2>
+                    <p class="lead mb-0">
+                        <i class="bi bi-calendar-check"></i> Tu cita ha sido <strong>confirmada automáticamente</strong>
+                    </p>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detalles de la cita confirmada -->
+        <div class="row" th:if="${citaConfirmada}">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-lg border-success">
+                    <div class="card-header bg-success text-white text-center">
+                        <h3 class="mb-0">
+                            <i class="bi bi-clipboard-check"></i> Detalles de tu Cita Confirmada
+                        </h3>
+                        <p class="mb-0 mt-2">
+                            <span class="badge bg-light text-success fs-6">
+                                <i class="bi bi-check-circle"></i> CONFIRMADA
+                            </span>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <!-- Información personal -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-person"></i> Cliente
+                                </h6>
+                                <p class="fw-bold" th:text="${citaConfirmada.nombre}">Nombre del Cliente</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-telephone"></i> Teléfono
+                                </h6>
+                                <p class="fw-bold" th:text="${citaConfirmada.telefono}">Teléfono</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Servicio -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-tags"></i> Tipo de Servicio
+                                </h6>
+                                <p class="fw-bold text-primary" th:text="${citaConfirmada.tipoServicioFormateado}">Tipo de Servicio</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Fecha y hora -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-calendar3"></i> Fecha Solicitada
+                                </h6>
+                                <p class="fw-bold text-warning" th:text="${citaConfirmada.fechaPreferidaFormateada}">Fecha</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-clock"></i> Hora Preferida
+                                </h6>
+                                <p class="fw-bold text-info" th:text="${citaConfirmada.horaPreferidaFormateada}">Hora</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Descripción del trabajo -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-card-text"></i> Descripción del Trabajo
+                                </h6>
+                                <p class="border p-3 bg-light rounded" th:text="${citaConfirmada.descripcion}">Descripción</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Observaciones (si las hay) -->
+                        <div class="row mb-3" th:if="${citaConfirmada.observaciones != null and !citaConfirmada.observaciones.isEmpty()}">
+                            <div class="col-12">
+                                <h6 class="text-muted">
+                                    <i class="bi bi-chat-square-text"></i> Observaciones
+                                </h6>
+                                <p class="border p-3 bg-light rounded" th:text="${citaConfirmada.observaciones}">Observaciones</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Información de la solicitud -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <h6 class="alert-heading">
+                                        <i class="bi bi-info-circle"></i> Información de la Solicitud
+                                    </h6>
+                                    <p class="mb-1">
+                                        <strong>Fecha de solicitud:</strong> <span th:text="${citaConfirmada.fechaSolicitudFormateada}">Fecha solicitud</span>
+                                    </p>
+                                    <p class="mb-1">
+                                        <strong>Número de cita:</strong> #<span th:text="${citaConfirmada.id}">ID</span>
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Estado:</strong> <span class="badge bg-success">CONFIRMADA</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Acciones -->
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <div class="d-grid gap-2 d-md-block">
+                            <a href="/cita-previa/consultar" class="btn btn-outline-primary">
+                                <i class="bi bi-search"></i> Consultar Otras Citas
+                            </a>
+                            <a href="/cita-previa" class="btn btn-outline-warning">
+                                <i class="bi bi-plus-circle"></i> Solicitar Nueva Cita
+                            </a>
+                            <a href="/" class="btn btn-success">
+                                <i class="bi bi-house-heart"></i> Volver al Inicio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Información de contacto -->
+                <div class="card mt-4 bg-light">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="bi bi-telephone-fill"></i> ¿Necesitas hacer cambios?
+                        </h5>
+                        <p class="card-text">
+                            Si necesitas modificar o cancelar tu cita, contáctanos directamente:
+                        </p>
+                        <p class="card-text">
+                            <strong>Teléfono: XXX XXX XXX</strong><br>
+                            <small class="text-muted">Horario: Lunes a Viernes 9:00 - 19:00</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mensaje por defecto si no hay cita -->
+        <div class="row" th:unless="${citaConfirmada}">
+            <div class="col-12 text-center">
+                <div class="alert alert-warning">
+                    <h4><i class="bi bi-exclamation-triangle"></i> No se encontró información de la cita</h4>
+                    <p>Parece que no hay información de cita disponible.</p>
+                    <a href="/cita-previa" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Solicitar Nueva Cita
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

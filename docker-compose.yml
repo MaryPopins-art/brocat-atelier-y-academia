@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:13
+    container_name: academia-postgres
+    environment:
+      POSTGRES_DB: academia_brocat_db
+      POSTGRES_USER: academia_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+  # Aplicación Academia BROCAT
+  app:
+    build: .
+    container_name: academia-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_USERNAME: academia_user
+      DB_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/academia_brocat_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx proxy reverso
+  nginx:
+    image: nginx:alpine
+    container_name: academia-nginx
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx-config.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/ssl/certs
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Cita Previa - Atelier BROCAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container-fluid">
+            <a class="navbar-brand text-dark" href="/">
+                <i class="bi bi-scissors"></i> Atelier BROCAT - CITA PREVIA
+            </a>
+            <a href="/" class="btn btn-outline-dark">
+                <i class="bi bi-house"></i> Volver al Inicio
+            </a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-warning text-center" role="alert">
+                    <h2 class="alert-heading">
+                        <i class="bi bi-calendar-plus"></i> Solicitar Cita Previa
+                    </h2>
+                    <p class="lead mb-0">
+                        <i class="bi bi-star"></i> Servicios personalizados de costura y arreglos
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulario de Cita Previa -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0">
+                            <i class="bi bi-form"></i> Datos de la Cita
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Mensaje de éxito -->
+                        <div th:if="${mensaje == 'success'}" class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill"></i> <strong>¡Cita confirmada automáticamente!</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        
+                        <!-- Mensaje de error -->
+                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i> <span th:text="${error}">Error</span>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                        
+                        <form method="post" action="/cita-previa/solicitar" th:object="${citaPrevia}">
+                            <!-- Datos Personales -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">
+                                        <i class="bi bi-person"></i> Nombre Completo *
+                                    </label>
+                                    <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label">
+                                        <i class="bi bi-telephone"></i> Teléfono *
+                                    </label>
+                                    <input type="tel" class="form-control" id="telefono" th:field="*{telefono}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email
+                                </label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}">
+                            </div>
+                            
+                            <!-- Tipo de Servicio -->
+                            <div class="mb-3">
+                                <label for="tipoServicio" class="form-label">
+                                    <i class="bi bi-tags"></i> Tipo de Servicio *
+                                </label>
+                                <select class="form-select" id="tipoServicio" th:field="*{tipoServicio}" required>
+                                    <option value="">Seleccione un servicio...</option>
+                                    <option value="arreglos">Arreglos y Ajustes</option>
+                                    <option value="costura-personalizada">Costura Personalizada</option>
+                                    <option value="proyecto-especial">Proyecto Especial</option>
+                                    <option value="consultoria">Consultoría de Diseño</option>
+                                    <option value="otro">Otro (especificar en observaciones)</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Fecha Preferida -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="fechaPreferida" class="form-label">
+                                        <i class="bi bi-calendar"></i> Fecha Preferida *
+                                    </label>
+                                    <input type="date" class="form-control" id="fechaPreferida" th:field="*{fechaPreferida}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="horaPreferida" class="form-label">
+                                        <i class="bi bi-clock"></i> Hora Preferida - Atelier BROCAT *
+                                    </label>
+                                    <select class="form-select" id="horaPreferida" th:field="*{horaPreferida}" required>
+                                        <option value="">Seleccione primero una fecha</option>
+                                    </select>
+                                    <div id="infoHorarioAtelier" class="form-text"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Descripción del Trabajo -->
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">
+                                    <i class="bi bi-card-text"></i> Descripción del Trabajo *
+                                </label>
+                                <textarea class="form-control" id="descripcion" th:field="*{descripcion}" rows="4" 
+                                          placeholder="Describe detalladamente el trabajo que necesitas..." required></textarea>
+                            </div>
+                            
+                            <!-- Observaciones -->
+                            <div class="mb-3">
+                                <label for="observaciones" class="form-label">
+                                    <i class="bi bi-chat-square-text"></i> Observaciones Adicionales
+                                </label>
+                                <textarea class="form-control" id="observaciones" th:field="*{observaciones}" rows="3" 
+                                          placeholder="Cualquier información adicional que consideres relevante..."></textarea>
+                            </div>
+                            
+                            <!-- Botones -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/" class="btn btn-outline-secondary me-md-2">
+                                    <i class="bi bi-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-success fw-bold">
+                                    <i class="bi bi-check-circle"></i> Confirmar Cita Automáticamente
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Información de Contacto -->
+                <div class="card mt-4 bg-success text-white">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="bi bi-check-circle-fill"></i> Confirmación Automática
+                        </h5>
+                        <p class="card-text">
+                            <i class="bi bi-lightning-charge"></i> <strong>Tu cita se confirma automáticamente</strong> al enviar el formulario.
+                            No necesitas esperar confirmación.
+                        </p>
+                        <p class="card-text">
+                            <i class="bi bi-telephone"></i> Para cambios o consultas: <strong>XXX XXX XXX</strong><br>
+                            <small>Horario Atelier: Lunes a Viernes 10:00 - 13:30 y 17:00 - 20:30</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Establecer fecha mínima como hoy
+        document.getElementById('fechaPreferida').min = new Date().toISOString().split('T')[0];
+        
+        // Variables para el manejo dinámico de horas ESPECÍFICAS DEL ATELIER
+        const fechaInput = document.getElementById('fechaPreferida');
+        const horaSelect = document.getElementById('horaPreferida');
+        const infoHorario = document.getElementById('infoHorarioAtelier');
+        
+        // Función para cargar horas disponibles DEL ATELIER (independientes de la Academia)
+        async function cargarHorasDisponiblesAtelier(fecha) {
+            try {
+                // Mostrar loading
+                horaSelect.innerHTML = '<option value="">Cargando horas del Atelier...</option>';
+                horaSelect.disabled = true;
+                infoHorario.innerHTML = '<span class="text-info"><i class="bi bi-hourglass-split"></i> Verificando disponibilidad en el Atelier...</span>';
+                
+                // Llamada para obtener información del día DEL ATELIER
+                const responseInfo = await fetch(`/cita-previa/api/info-dia-atelier?fecha=${fecha}`);
+                const infoDia = await responseInfo.json();
+                
+                // Llamada para obtener horas disponibles DEL ATELIER
+                const responseHoras = await fetch(`/cita-previa/api/horas-disponibles-atelier?fecha=${fecha}`);
+                const horasDisponibles = await responseHoras.json();
+                
+                // Limpiar opciones
+                horaSelect.innerHTML = '';
+                
+                // Manejar estados especiales del Atelier
+                if (infoDia.estado === 'cerrado') {
+                    horaSelect.innerHTML = '<option value="">Domingo cerrado - Atelier</option>';
+                    infoHorario.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> El Atelier BROCAT está cerrado los domingos</span>';
+                    horaSelect.disabled = true;
+                    return;
+                }
+                
+                if (infoDia.estado === 'pasada') {
+                    horaSelect.innerHTML = '<option value="">Fecha no disponible</option>';
+                    infoHorario.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> No se pueden reservar fechas pasadas</span>';
+                    horaSelect.disabled = true;
+                    return;
+                }
+                
+                if (infoDia.estado === 'completo') {
+                    horaSelect.innerHTML = '<option value="">No hay horas disponibles en el Atelier</option>';
+                    infoHorario.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle"></i> Atelier completo - prueba otra fecha</span>';
+                    horaSelect.disabled = true;
+                    return;
+                }
+                
+                // Agregar horas disponibles del Atelier
+                if (horasDisponibles.length > 0) {
+                    horaSelect.innerHTML = '<option value="">Seleccione una hora del Atelier *</option>';
+                    
+                    horasDisponibles.forEach(hora => {
+                        const option = document.createElement('option');
+                        option.value = hora.value;
+                        option.textContent = hora.text + ' (Atelier)';
+                        horaSelect.appendChild(option);
+                    });
+                    
+                    horaSelect.disabled = false;
+                    infoHorario.innerHTML = `<span class="text-success"><i class="bi bi-check-circle"></i> ${horasDisponibles.length} horas disponibles en el Atelier BROCAT</span>`;
+                } else {
+                    horaSelect.innerHTML = '<option value="">No hay horas libres en el Atelier</option>';
+                    infoHorario.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle"></i> No hay horas libres en el Atelier para esta fecha</span>';
+                    horaSelect.disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('Error al cargar horas del Atelier:', error);
+                horaSelect.innerHTML = '<option value="">Error al cargar horas del Atelier</option>';
+                horaSelect.disabled = true;
+                infoHorario.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> Error al verificar disponibilidad del Atelier</span>';
+            }
+        }
+        
+        // Event listener para cambio de fecha
+        fechaInput.addEventListener('change', function() {
+            const fechaSeleccionada = this.value;
+            
+            if (fechaSeleccionada) {
+                cargarHorasDisponiblesAtelier(fechaSeleccionada);
+            } else {
+                horaSelect.innerHTML = '<option value="">Seleccione primero una fecha</option>';
+                horaSelect.disabled = true;
+                infoHorario.innerHTML = '';
+            }
+        });
+        
+        // Actualizar información cuando se selecciona una hora del Atelier
+        horaSelect.addEventListener('change', function() {
+            const fechaSeleccionada = fechaInput.value;
+            if (fechaSeleccionada && this.value) {
+                infoHorario.innerHTML = `<span class="text-info"><i class="bi bi-clock"></i> Hora seleccionada en el Atelier: ${this.value}</span>`;
+            }
+        });
+        
+        // Información sobre horarios del Atelier BROCAT (independientes de la Academia)
+        const mostrarInfoHorariosAtelier = () => {
+            const info = `
+                <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                    <h6><i class="bi bi-info-circle"></i> Horarios del Atelier BROCAT (Independientes de la Academia):</h6>
+                    <ul class="mb-0">
+                        <li><strong>Lunes a Viernes:</strong> 10:00 - 13:30 y 17:00 - 20:30 (Atelier)</li>
+                        <li><strong>Sábados:</strong> 10:00 - 13:30 (Atelier)</li>
+                        <li><strong>Domingos:</strong> Cerrado (Atelier)</li>
+                        <li><em>Nota: Las horas mostradas son específicas para citas del Atelier y no afectan las recuperaciones de la Academia</em></li>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            // Insertar después del formulario si no existe ya
+            if (!document.querySelector('.alert-info')) {
+                document.querySelector('.card-body').insertAdjacentHTML('beforeend', info);
+            }
+        };
+        
+        // Mostrar información de horarios del Atelier cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', mostrarInfoHorariosAtelier);
+    </script>
+</body>
+</html>

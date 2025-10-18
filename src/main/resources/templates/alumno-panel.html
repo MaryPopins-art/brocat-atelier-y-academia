@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel - Academia de Costura</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-person-circle"></i> Mi Panel - Academia BROCAT
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="bi bi-person-check"></i> 
+                    Bienvenido/a, <span th:text="${alumno.nombre}"></span>
+                </span>
+                <a class="nav-link" href="/alumno/logout">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        
+        <!-- Mensajes de feedback -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Mensaje de bienvenida -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-success" role="alert">
+                    <h4 class="alert-heading">
+                        <i class="bi bi-house-heart"></i> ¡Bienvenido/a a tu Academia de Costura BROCAT!
+                    </h4>
+                    <p class="mb-0">
+                        <i class="bi bi-person-circle"></i> Hola <strong th:text="${alumno.nombre}"></strong>, 
+                        nos alegra verte de nuevo. Aquí puedes gestionar tus clases, horarios y recuperaciones.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header con información del alumno -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-person-badge"></i> Mi Información Personal
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item mb-3">
+                                    <strong><i class="bi bi-person"></i> Nombre Completo:</strong>
+                                    <span th:text="${alumno.nombre + ' ' + alumno.apellidos}" class="ms-2"></span>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong><i class="bi bi-card-text"></i> DNI:</strong>
+                                    <span th:text="${alumno.dni}" class="ms-2"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item mb-3">
+                                    <strong><i class="bi bi-telephone"></i> Teléfono:</strong>
+                                    <span th:text="${alumno.telefono}" class="ms-2"></span>
+                                </div>
+                                <div class="info-item mb-3">
+                                    <strong><i class="bi bi-book"></i> Curso:</strong>
+                                    <span th:text="${alumno.curso}" class="ms-2 badge bg-primary"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del curso y profesor -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-workspace"></i> Mi Profesor/a
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center">
+                            <i class="bi bi-person-circle display-4 text-primary"></i>
+                            <h4 th:text="${alumno.profesor}" class="mt-2"></h4>
+                            <p class="text-muted">Profesor/a asignado/a</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-calendar-event"></i> Información del Curso
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item mb-3">
+                            <strong>Estado de inscripción:</strong>
+                            <span class="badge bg-success ms-2">
+                                <i class="bi bi-check-circle"></i> Activo
+                            </span>
+                        </div>
+                        <div class="info-item mb-2">
+                            <strong>Curso asignado:</strong>
+                            <span th:text="${alumno.curso}" class="ms-2"></span>
+                        </div>
+                        <div class="info-item" th:if="${curso != null}">
+                            <strong>Horario:</strong>
+                            <span th:text="${curso.horario}" class="ms-2 badge bg-info"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de clases perdidas que puede recuperar -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div th:if="${clasesPerdidas != null and !#lists.isEmpty(clasesPerdidas)}" class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Clases Pendientes de Recuperar
+                            <span class="badge bg-danger ms-2" th:text="${#lists.size(clasesPerdidas)}"></span>
+                        </h5>
+                        <small>Tienes clases que puedes recuperar dentro del plazo de 30 días naturales</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div th:each="clase : ${clasesPerdidas}" class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100 border-warning">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-warning">
+                                            <i class="bi bi-book"></i> <span th:text="${clase.materia}"></span>
+                                        </h6>
+                                        <div class="small text-muted mb-2">
+                                            <div><strong>Día perdido:</strong> <span th:text="${clase.diaSemana}"></span></div>
+                                            <div><strong>Fecha:</strong> <span th:text="${clase.fechaAusenciaFormateada}"></span></div>
+                                            <div><strong>Horario:</strong> <span th:text="${clase.horario}"></span></div>
+                                        </div>
+                                        <div class="alert alert-info py-2 small">
+                                            <i class="bi bi-calendar-event"></i> 
+                                            Límite: <span th:text="${clase.fechaLimiteFormateada}"></span>
+                                        </div>
+                                        <button class="btn btn-warning btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalRecuperacionEspecifica"
+                                                th:data-clase-id="${clase.id}"
+                                                th:data-materia="${clase.materia}"
+                                                th:data-dia="${clase.diaSemana}"
+                                                th:data-fecha="${clase.fechaAusenciaFormateada}">
+                                            <i class="bi bi-arrow-clockwise"></i> Recuperar Esta Clase
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mensaje cuando no hay clases para recuperar -->
+                <div th:if="${clasesPerdidas == null or #lists.isEmpty(clasesPerdidas)}" class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-check-circle"></i> Estado de Clases
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <i class="bi bi-emoji-smile display-4 text-success"></i>
+                        <h4 class="mt-3 text-success">¡Excelente!</h4>
+                        <p class="text-muted">
+                            No tienes clases pendientes de recuperar en este momento. 
+                            Mantén una buena asistencia para continuar con tu aprendizaje.
+                        </p>
+                        <div class="alert alert-info">
+                            <i class="bi bi-lightbulb"></i>
+                            <strong>Recuerda:</strong> Si no puedes asistir a una clase, puedes marcar tu ausencia 
+                            desde el calendario y tendrás 30 días naturales para recuperarla.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de acciones rápidas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightning"></i> Acciones Rápidas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-calendar-check display-5 text-info"></i>
+                                    <h6 class="mt-2">Consultar Horarios</h6>
+                                    <p class="text-muted small">Ver horarios de tu grupo</p>
+                                    <a href="/alumno/horarios" class="btn btn-info btn-sm">
+                                        <i class="bi bi-calendar-week"></i> Ver Horario
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-chat-dots display-5 text-warning"></i>
+                                    <h6 class="mt-2">Mensajes</h6>
+                                    <p class="text-muted small">Comunicación con profesores</p>
+                                    <button class="btn btn-warning btn-sm" disabled>
+                                        Próximamente
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="p-3 border rounded">
+                                    <i class="bi bi-file-earmark-text display-5 text-secondary"></i>
+                                    <h6 class="mt-2">Material de Clase</h6>
+                                    <p class="text-muted small">Descargar recursos</p>
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        Próximamente
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer informativo -->
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Academia de Costura BROCAT</strong> 
+                    Aquí puedes consultar toda tu información académica y gestionar tus clases. Si tienes alguna duda o necesitas actualizar tus datos, 
+                    contacta con la secretaría de la academia.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal para Recuperación de Clase Específica Perdida -->
+    <div class="modal fade" id="modalRecuperacionEspecifica" tabindex="-1" aria-labelledby="modalRecuperacionEspecificaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalRecuperacionEspecificaLabel">
+                        <i class="bi bi-calendar-check"></i> Recuperar Clase Perdida
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" action="/alumno/recuperacion-clase-perdida">
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-info-circle"></i> 
+                            <strong>Recuperando:</strong> <span id="materiaEspecifica"></span> del <span id="diaEspecifico"></span> (<span id="fechaEspecifica"></span>)
+                        </div>
+                        
+                        <!-- Selección directa de día y horario -->
+                        <div class="mb-3">
+                            <label for="diaRecuperacionEspecifica" class="form-label">
+                                <i class="bi bi-calendar3"></i> <strong>Selecciona cuándo recuperar tu clase:</strong>
+                            </label>
+                            <select class="form-select" id="diaRecuperacionEspecifica" name="diaRecuperacion" required onchange="seleccionarOpcionDirecta()">
+                                <option value="">-- Elige un día y horario --</option>
+                                <!-- Mostrar todas las opciones completas con día, fecha y horario -->
+                                <option th:each="opcionCompleta : ${opcionesCompletas}" 
+                                        th:value="${#strings.substringBefore(opcionCompleta, '||')}" 
+                                        th:text="${#strings.substringAfter(opcionCompleta, '||')}"
+                                        th:style="${opcionCompleta.contains('Plaza por ausencia') ? 'color: #0d6efd; font-weight: bold;' : 'color: #198754;'}">
+                                </option>
+                            </select>
+                            <div class="form-text">
+                                <span class="text-success">🟢</span> Plazas normales | 
+                                <span class="text-primary">🔵</span> Plazas por ausencias |
+                                <i class="bi bi-info-circle"></i> Selecciona directamente el día, fecha y horario deseado
+                            </div>
+                        </div>
+                        
+                        <!-- Campos ocultos -->
+                        <input type="hidden" id="claseIdEspecifica" name="clasePerdidaId" value="">
+                        <input type="hidden" id="materiaEspecificaHidden" name="materiaOriginal" value="">
+                        <input type="hidden" id="plazaSeleccionadaHidden" name="plazaSeleccionada" value="">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-warning" id="btnConfirmarEspecifica" disabled>
+                            <i class="bi bi-check-circle"></i> Recuperar Esta Clase
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Script con datos de plazas por día -->
+    <script th:inline="javascript">
+        // Datos de plazas organizadas por día (poblado desde el servidor)
+        const plazasPorDia = /*[[${plazasPorDia}]]*/ {};
+    </script>
+    
+    <script>
+
+        // Función para manejar la selección directa de día y horario
+        function seleccionarOpcionDirecta() {
+            const selectPrincipal = document.getElementById('diaRecuperacionEspecifica');
+            const valorSeleccionado = selectPrincipal.value;
+            
+            if (valorSeleccionado && valorSeleccionado !== '') {
+                // El formato es: "Dia|Descripcion_completa"
+                const partes = valorSeleccionado.split('|');
+                const dia = partes[0];
+                const descripcionCompleta = partes[1];
+                
+                // Llenar los campos ocultos
+                document.getElementById('plazaSeleccionadaHidden').value = descripcionCompleta;
+                
+                // Habilitar el botón de confirmar
+                document.getElementById('btnConfirmarEspecifica').disabled = false;
+                
+                console.log('Seleccionado:', dia, descripcionCompleta);
+            } else {
+                // Deshabilitar el botón si no hay selección
+                document.getElementById('btnConfirmarEspecifica').disabled = true;
+                document.getElementById('plazaSeleccionadaHidden').value = '';
+            }
+        }
+
+        // Event listeners para la página
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Event listeners para los botones de recuperación específica
+            const botonesRecuperacionEspecifica = document.querySelectorAll('[data-bs-target="#modalRecuperacionEspecifica"]');
+            botonesRecuperacionEspecifica.forEach(button => {
+                button.addEventListener('click', function() {
+                    const claseId = this.getAttribute('data-clase-id');
+                    const materia = this.getAttribute('data-materia');
+                    const dia = this.getAttribute('data-dia');
+                    const fecha = this.getAttribute('data-fecha');
+                    
+                    // Rellenar el modal específico
+                    document.getElementById('materiaEspecifica').textContent = materia;
+                    document.getElementById('diaEspecifico').textContent = dia;
+                    document.getElementById('fechaEspecifica').textContent = fecha;
+                    document.getElementById('claseIdEspecifica').value = claseId;
+                    document.getElementById('materiaEspecificaHidden').value = materia;
+                    
+                    // Limpiar selecciones anteriores
+                    document.getElementById('diaRecuperacionEspecifica').value = '';
+                    document.getElementById('plazaSeleccionadaEspecifica').innerHTML = '<option value="">-- Primero selecciona un día --</option>';
+                    document.getElementById('divHorariosEspecifica').style.display = 'none';
+                    document.getElementById('btnConfirmarEspecifica').disabled = true;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

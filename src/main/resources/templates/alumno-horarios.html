@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Horario Mensual - Academia BROCAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .calendario-mensual {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .dia-calendario {
+            min-height: 120px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .dia-calendario:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .dia-numero {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .dia-hoy {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white !important;
+        }
+        
+        .dia-hoy .dia-numero {
+            color: white;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .dia-otro-mes {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .horario-mini {
+            font-size: 0.75em;
+            background: rgba(40, 167, 69, 0.1);
+            border-left: 3px solid #28a745;
+            padding: 2px 6px;
+            margin: 2px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .ausencia-mini {
+            font-size: 0.7em;
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 3px solid #ffc107;
+            padding: 2px 6px;
+            margin: 1px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .header-mes {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .dia-semana-header {
+            background-color: #e9ecef;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .navegacion-mes {
+            background: rgba(40, 167, 69, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .btn-mes {
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="/alumno/panel">
+                <i class="bi bi-calendar-month"></i> Mi Horario Mensual - Academia BROCAT
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="bi bi-person-check"></i> 
+                    <span th:text="${alumno.nombre}"></span>
+                </span>
+                <a class="nav-link" href="/alumno/panel">
+                    <i class="bi bi-arrow-left"></i> Volver al Panel
+                </a>
+                <a class="nav-link" href="/alumno/logout">
+                    <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Mensajes de alerta -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${warningMessage}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${warningMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-x-circle-fill me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Navegación mensual -->
+        <div class="navegacion-mes">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                        <a th:href="@{/alumno/horarios(mes=${mesActual == 1 ? 12 : mesActual - 1}, anio=${mesActual == 1 ? anioActual - 1 : anioActual})}" 
+                           class="btn btn-outline-success btn-mes me-2">
+                            <i class="bi bi-chevron-left"></i> Mes Anterior
+                        </a>
+                        <a th:href="@{/alumno/horarios(mes=${mesActual == 12 ? 1 : mesActual + 1}, anio=${mesActual == 12 ? anioActual + 1 : anioActual})}" 
+                           class="btn btn-outline-success btn-mes">
+                            Mes Siguiente <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h3 class="mb-0 text-success">
+                        <i class="bi bi-calendar-month"></i> 
+                        <span th:text="${#strings.capitalize(nombreMes)} + ' ' + ${anioActual}"></span>
+                    </h3>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="small text-muted">
+                        <div><strong>Curso:</strong> <span th:text="${curso}" class="badge bg-primary"></span></div>
+                        <div><strong>Profesor/a:</strong> <span th:text="${alumno.profesor}"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendario mensual -->
+        <div class="calendario-mensual">
+            <div class="header-mes p-3">
+                <h4 class="mb-0 text-center">
+                    <i class="bi bi-calendar4-week"></i> 
+                    Calendario de Clases - <span th:text="${#strings.capitalize(nombreMes)} + ' ' + ${anioActual}"></span>
+                </h4>
+            </div>
+            
+            <!-- Encabezados de días de la semana -->
+            <div class="row g-0">
+                <div class="col dia-semana-header">LUNES</div>
+                <div class="col dia-semana-header">MARTES</div>
+                <div class="col dia-semana-header">MIÉRCOLES</div>
+                <div class="col dia-semana-header">JUEVES</div>
+                <div class="col dia-semana-header">VIERNES</div>
+                <div class="col dia-semana-header">SÁBADO</div>
+                <div class="col dia-semana-header">DOMINGO</div>
+            </div>
+            
+            <!-- Generar calendario por semanas -->
+            <div th:with="fechaInicio=${primerDiaMes.minusDays(primerDiaMes.dayOfWeek.value - 1)}">
+                <div th:each="semana : ${#numbers.sequence(0, 5)}" class="row g-0">
+                    <div th:each="diaOffset : ${#numbers.sequence(0, 6)}" 
+                         th:with="fechaDia=${fechaInicio.plusDays(semana * 7 + diaOffset)},
+                                  esDelMes=${!fechaDia.isBefore(primerDiaMes) && !fechaDia.isAfter(ultimoDiaMes)},
+                                  esHoy=${fechaDia.equals(T(java.time.LocalDate).now())},
+                                  horariosDelDia=${calendarioMensual.get(fechaDia)},
+                                  ausenciasDelDia=${ausenciasPorFecha.get(fechaDia)}"
+                         class="col dia-calendario"
+                         th:classappend="${esHoy} ? 'dia-hoy' : (${!esDelMes} ? 'dia-otro-mes' : '')">
+                        
+                        <div class="dia-numero" th:text="${fechaDia.dayOfMonth}"></div>
+                        
+                        <div class="p-2 pt-4">
+                            <!-- Mostrar horarios del día -->
+                            <div th:if="${horariosDelDia != null && !#lists.isEmpty(horariosDelDia)}">
+                                <div th:each="horario : ${horariosDelDia}" class="horario-mini">
+                                    <div class="fw-bold" th:text="${horario.horarioFormateado}"></div>
+                                    <div th:text="${horario.materia}"></div>
+                                    <div class="text-muted small" th:text="${horario.aula}"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mostrar ausencias del día -->
+                            <div th:if="${ausenciasDelDia != null && !#lists.isEmpty(ausenciasDelDia)}">
+                                <div th:each="ausencia : ${ausenciasDelDia}" class="ausencia-mini">
+                                    <i class="bi bi-exclamation-triangle"></i> No asistiré
+                                </div>
+                            </div>
+                            
+                            <!-- Botón para marcar ausencia (solo días del mes actual con clases) -->
+                            <div th:if="${esDelMes && horariosDelDia != null && !#lists.isEmpty(horariosDelDia) && (ausenciasDelDia == null || #lists.isEmpty(ausenciasDelDia))}">
+                                <form method="post" action="/alumno/ausencia" class="mt-1">
+                                    <input type="hidden" name="diaSemana" th:value="${fechaDia.dayOfWeek.getDisplayName(T(java.time.format.TextStyle).FULL, #locale)}">
+                                    <input type="hidden" name="fecha" th:value="${fechaDia}">
+                                    <input type="hidden" name="motivo" value="No especificado">
+                                    <button type="submit" class="btn btn-outline-warning btn-sm w-100" style="font-size: 0.7em;">
+                                        <i class="bi bi-calendar-x"></i> No voy
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Leyenda -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-info-circle"></i> Leyenda
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="horario-mini me-2">Ejemplo</div>
+                                    <small>Clases programadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="ausencia-mini me-2">No voy</div>
+                                    <small>Ausencias marcadas</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="dia-hoy" style="width: 30px; height: 20px; border-radius: 4px; margin-right: 8px;"></div>
+                                    <small>Día actual</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="dia-otro-mes" style="width: 30px; height: 20px; border-radius: 4px; margin-right: 8px;"></div>
+                                    <small>Otros meses</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="row mt-3 mb-4">
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-lightbulb"></i>
+                    <strong>Academia de Costura BROCAT</strong> - Vista mensual de tu horario. 
+                    Haz clic en "No voy" para marcar ausencias. Navega entre meses usando los botones de navegación.
+                    Las clases perdidas podrás recuperarlas desde tu panel principal.
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Agregar interactividad al calendario
+        document.addEventListener('DOMContentLoaded', function() {
+            // Resaltar día al hacer hover
+            const diasCalendario = document.querySelectorAll('.dia-calendario');
+            diasCalendario.forEach(dia => {
+                dia.addEventListener('mouseenter', function() {
+                    if (!this.classList.contains('dia-hoy')) {
+                        this.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+                    }
+                });
+                
+                dia.addEventListener('mouseleave', function() {
+                    if (!this.classList.contains('dia-hoy')) {
+                        this.style.background = '';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

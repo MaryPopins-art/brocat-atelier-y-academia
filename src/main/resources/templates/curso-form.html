@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${editMode ? 'Editar Curso' : 'Nuevo Curso'}">Curso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">
+                <i th:class="${editMode ? 'bi bi-pencil-square' : 'bi bi-plus-circle'}"></i>
+                <span th:text="${editMode ? 'Editar Curso' : 'Nuevo Curso'}">Curso</span>
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="${editMode ? '/admin/cursos/editar/' + curso.id : '/admin/cursos/nuevo'}"
+                  th:object="${curso}">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">
+                        <i class="bi bi-book"></i> Nombre del Curso
+                    </label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" 
+                           th:field="*{nombre}"
+                           placeholder="Ej: Costura Avanzada, Bordado Básico, Patchwork..." required>
+                    <div class="form-text">Ingrese el nombre descriptivo del curso.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="horario" class="form-label">
+                        <i class="bi bi-clock"></i> Horario
+                    </label>
+                    <input type="text" class="form-control" id="horario" name="horario" 
+                           th:field="*{horario}"
+                           placeholder="Ej: Lunes y Miércoles 10:00-12:00" required>
+                    <div class="form-text">Especifique los días y horarios de las clases.</div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/admin" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <i th:class="${editMode ? 'bi bi-check-circle' : 'bi bi-plus-circle'}"></i>
+                        <span th:text="${editMode ? 'Actualizar Curso' : 'Guardar Curso'}">Guardar</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

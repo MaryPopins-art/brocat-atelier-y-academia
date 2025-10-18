@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Añadir Profesor - Academia BROCAT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/admin">
+            <i class="bi bi-scissors"></i> Academia BROCAT - Panel Admin
+        </a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="/admin">
+                <i class="bi bi-arrow-left"></i> Volver al Panel
+            </a>
+            <a class="nav-link" href="/logout">
+                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0" th:if="${editMode == null or !editMode}">
+                        <i class="bi bi-person-plus"></i> Añadir Nuevo Profesor
+                    </h4>
+                    <h4 class="mb-0" th:if="${editMode != null and editMode}">
+                        <i class="bi bi-pencil"></i> Editar Profesor
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Mensaje de bienvenida -->
+                    <div class="alert alert-info mb-4" th:if="${editMode == null or !editMode}">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <div>
+                                <strong>Añadir Profesor</strong><br>
+                                <small>Complete la información del nuevo profesor de costura.</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mb-4" th:if="${editMode != null and editMode}">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-pencil me-2"></i>
+                            <div>
+                                <strong>Editar Profesor</strong><br>
+                                <small>Modifica la información y cursos asignados del profesor.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form th:action="@{${editMode} ? '/admin/profesores/editar/' + ${profesor.id} : '/admin/profesores/nuevo'}" 
+                          method="post" th:object="${profesor}">
+                        <!-- Campo Nombre -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">
+                                    <i class="bi bi-person"></i> Nombre
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombre" 
+                                       th:field="*{nombre}" 
+                                       placeholder="Ej: María"
+                                       required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellidos" class="form-label">
+                                    <i class="bi bi-person"></i> Apellidos
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="apellidos" 
+                                       th:field="*{apellidos}" 
+                                       placeholder="Ej: García López">
+                            </div>
+                        </div>
+
+                        <!-- Información de Contacto -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">
+                                    <i class="bi bi-envelope"></i> Email
+                                </label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       th:field="*{email}" 
+                                       placeholder="profesor@brocat.es">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">
+                                    <i class="bi bi-telephone"></i> Teléfono
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="telefono" 
+                                       th:field="*{telefono}" 
+                                       placeholder="123 456 789">
+                            </div>
+                        </div>
+
+                        <!-- Campo Cursos -->
+                        <div class="mb-4">
+                            <label for="cursos" class="form-label">
+                                <i class="bi bi-book"></i> Cursos Asignados
+                            </label>
+                            <div class="border rounded p-3" style="background-color: #f8f9fa;">
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="bi bi-info-circle"></i> 
+                                        Selecciona uno o más cursos que impartirá este profesor
+                                    </small>
+                                </div>
+                                <div class="row">
+                                    <div th:each="curso : ${cursosDisponibles}" class="col-md-12 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" 
+                                                   type="checkbox" 
+                                                   th:id="'curso_' + ${curso}" 
+                                                   th:value="${curso}"
+                                                   th:checked="${cursosAsignados != null and cursosAsignados.size() > 0 and #lists.contains(cursosAsignados, curso)}"
+                                                   name="cursosSeleccionados">
+                                            <label class="form-check-label" 
+                                                   th:for="'curso_' + ${curso}"
+                                                   th:text="${curso}">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text">
+                                <i class="bi bi-lightbulb"></i>
+                                Puedes asignar múltiples cursos de costura según la especialización del profesor
+                            </div>
+                        </div>
+
+                        <!-- Botones de acción -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/admin" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary" th:if="${editMode == null or !editMode}">
+                                <i class="bi bi-check-circle"></i> Guardar Profesor
+                            </button>
+                            <button type="submit" class="btn btn-success" th:if="${editMode != null and editMode}">
+                                <i class="bi bi-check-circle"></i> Actualizar Profesor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="alert alert-light mt-3">
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <i class="bi bi-book text-primary"></i>
+                        <small class="d-block"><strong>Cursos Disponibles</strong></small>
+                        <small class="text-muted">Costura Básica, Patchwork Avanzado, Bordado Creativo</small>
+                    </div>
+                    <div class="col-md-6">
+                        <i class="bi bi-scissors text-primary"></i>
+                        <small class="d-block"><strong>Academia BROCAT</strong></small>
+                        <small class="text-muted">Gestión de profesores especializados</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
