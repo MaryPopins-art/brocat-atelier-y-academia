@@ -5,15 +5,20 @@ import com.academia.Alumno;
 import com.academia.Profesor;
 import com.academia.Curso;
 import com.academia.Grupo;
+import com.academia.CitaPrevia;
+import com.academia.repository.CitaPreviaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 public class AdminController {
@@ -24,6 +29,10 @@ public class AdminController {
     // Listas simuladas en memoria (luego se usarán repositorios)
     private List<Profesor> profesores = new ArrayList<>();
     private static List<Curso> cursos = new ArrayList<>();
+    
+    // Inyección del repositorio de citas previas
+    @Autowired
+    private CitaPreviaRepository citaPreviaRepository;
     
     // Referencia estática al AlumnoController para acceder a los métodos de ausencias
     private static AlumnoController alumnoController;
@@ -45,6 +54,83 @@ public class AdminController {
         cursos.add(new Curso(1L, "Costura Básica", "Lunes y Miércoles 10:00-12:00"));
         cursos.add(new Curso(2L, "Patchwork Avanzado", "Martes y Jueves 17:00-19:00"));
         cursos.add(new Curso(3L, "Bordado Creativo", "Sábados 09:00-11:00"));
+    }
+    
+    // Método para crear citas de ejemplo (se ejecuta después de la inyección de dependencias)
+    @PostConstruct
+    private void crearCitasDeEjemplo() {
+        try {
+            // Verificar si ya existen citas para evitar duplicados
+            if (citaPreviaRepository.count() == 0) {
+                System.out.println("=== CREANDO CITAS DE EJEMPLO PARA ATELIER ===");
+                
+                // Cita 1
+                CitaPrevia cita1 = new CitaPrevia();
+                cita1.setNombre("Ana Martínez");
+                cita1.setTelefono("666 123 456");
+                cita1.setEmail("ana.martinez@email.com");
+                cita1.setTipoServicio("Arreglo de ropa");
+                cita1.setFechaPreferida(LocalDate.now().plusDays(2));
+                cita1.setHoraPreferida("10:00");
+                cita1.setDescripcion("Necesito acortar un vestido para una boda");
+                cita1.setObservaciones("Tengo prisa, es para el fin de semana");
+                citaPreviaRepository.save(cita1);
+                
+                // Cita 2
+                CitaPrevia cita2 = new CitaPrevia();
+                cita2.setNombre("Carlos Rodriguez");
+                cita2.setTelefono("677 987 654");
+                cita2.setEmail("carlos.rod@gmail.com");
+                cita2.setTipoServicio("Costura creativa");
+                cita2.setFechaPreferida(LocalDate.now().plusDays(3));
+                cita2.setHoraPreferida("17:30");
+                cita2.setDescripcion("Quiero hacer un bolso personalizado para mi esposa");
+                cita2.setObservaciones("Es un regalo de aniversario");
+                citaPreviaRepository.save(cita2);
+                
+                // Cita 3
+                CitaPrevia cita3 = new CitaPrevia();
+                cita3.setNombre("Isabel López");
+                cita3.setTelefono("688 456 789");
+                cita3.setEmail("isabel.lopez@hotmail.com");
+                cita3.setTipoServicio("Bordado personalizado");
+                cita3.setFechaPreferida(LocalDate.now().plusDays(5));
+                cita3.setHoraPreferida("11:30");
+                cita3.setDescripcion("Bordar las iniciales en unas toallas");
+                cita3.setObservaciones("Son para regalo de bodas");
+                citaPreviaRepository.save(cita3);
+                
+                // Cita 4
+                CitaPrevia cita4 = new CitaPrevia();
+                cita4.setNombre("Miguel Fernández");
+                cita4.setTelefono("699 321 654");
+                cita4.setEmail("miguel.fernandez@empresa.com");
+                cita4.setTipoServicio("Reparación de tapicería");
+                cita4.setFechaPreferida(LocalDate.now().plusDays(7));
+                cita4.setHoraPreferida("19:00");
+                cita4.setDescripcion("Reparar el tapizado de una silla antigua");
+                cita4.setObservaciones("Es una silla de valor sentimental");
+                citaPreviaRepository.save(cita4);
+                
+                // Cita 5
+                CitaPrevia cita5 = new CitaPrevia();
+                cita5.setNombre("Laura Sánchez");
+                cita5.setTelefono("655 789 123");
+                cita5.setEmail("laura.sanchez@yahoo.es");
+                cita5.setTipoServicio("Consulta de diseño");
+                cita5.setFechaPreferida(LocalDate.now().plusDays(4));
+                cita5.setHoraPreferida("12:30");
+                cita5.setDescripcion("Asesoramiento para diseñar cortinas del salón");
+                cita5.setObservaciones("Estoy redecorando toda la casa");
+                citaPreviaRepository.save(cita5);
+                
+                System.out.println("✅ 5 citas de ejemplo creadas para el Atelier");
+            } else {
+                System.out.println("ℹ️  Ya existen citas en la base de datos, saltando creación de ejemplos");
+            }
+        } catch (Exception e) {
+            System.err.println("⚠️ Error creando citas de ejemplo: " + e.getMessage());
+        }
     }
     
     // Mostrar página de login
@@ -91,6 +177,7 @@ public class AdminController {
             return "redirect:/login";
         }
         
+        // ===== DATOS PARA ACADEMIA BROCAT =====
         List<Alumno> alumnos = AlumnoController.getAlumnos();
         model.addAttribute("alumnos", alumnos);
         model.addAttribute("profesores", profesores);
@@ -134,9 +221,23 @@ public class AdminController {
                 ausenciasDinamicas.put(alumno.id, alumno.clasesNoAsistidas);
             }
         }
-        
         model.addAttribute("ausenciasDinamicas", ausenciasDinamicas);
         System.out.println("📊 Ausencias dinámicas calculadas: " + ausenciasDinamicas);
+        
+        // ===== DATOS PARA ATELIER BROCAT =====
+        try {
+            // Obtener todas las citas previas confirmadas
+            List<CitaPrevia> citasConfirmadas = citaPreviaRepository.findByEstado("CONFIRMADA");
+            model.addAttribute("citasConfirmadas", citasConfirmadas);
+            
+            System.out.println("✂️ Citas confirmadas encontradas: " + citasConfirmadas.size());
+            for (CitaPrevia cita : citasConfirmadas) {
+                System.out.println("   - " + cita.getNombre() + " | " + cita.getFechaPreferida() + " | " + cita.getHoraPreferida() + " | " + cita.getTipoServicio());
+            }
+        } catch (Exception e) {
+            System.err.println("Error obteniendo citas previas: " + e.getMessage());
+            model.addAttribute("citasConfirmadas", new ArrayList<CitaPrevia>());
+        }
         
         return "admin-panel";
     }
@@ -435,6 +536,42 @@ public class AdminController {
         }
         cursos.removeIf(c -> c.id.equals(id));
         return "redirect:/admin";
+    }
+    
+    // Endpoint para obtener citas por fecha (para el calendario del Atelier)
+    @GetMapping("/admin/citas/fecha/{fecha}")
+    @ResponseBody
+    public List<CitaPrevia> getCitasPorFecha(@PathVariable String fecha, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return new ArrayList<>();
+        }
+        
+        try {
+            LocalDate fechaBuscada = LocalDate.parse(fecha, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            return citaPreviaRepository.findByFechaPreferida(fechaBuscada);
+        } catch (Exception e) {
+            System.err.println("Error al buscar citas por fecha: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    
+    // Endpoint para obtener todas las citas confirmadas del mes (para el calendario)
+    @GetMapping("/admin/citas/mes/{anio}/{mes}")
+    @ResponseBody
+    public List<CitaPrevia> getCitasDelMes(@PathVariable int anio, @PathVariable int mes, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return new ArrayList<>();
+        }
+        
+        try {
+            LocalDate inicioMes = LocalDate.of(anio, mes, 1);
+            LocalDate finMes = inicioMes.withDayOfMonth(inicioMes.lengthOfMonth());
+            
+            return citaPreviaRepository.findByFechaPreferidaBetween(inicioMes, finMes);
+        } catch (Exception e) {
+            System.err.println("Error al buscar citas del mes: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
     
     // Método estático para acceder a los cursos desde otros controladores

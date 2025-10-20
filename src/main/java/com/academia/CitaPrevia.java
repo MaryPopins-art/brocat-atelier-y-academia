@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name = "citas_previas")
@@ -25,6 +26,7 @@ public class CitaPrevia {
     private String tipoServicio;
     
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaPreferida;
     
     private String horaPreferida;

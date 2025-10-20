@@ -24,233 +24,937 @@
         </div>
     </div>
     
-    <!-- Pestañas para las diferentes secciones -->
-    <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+    <!-- Pestañas principales para Academia y Atelier -->
+    <ul class="nav nav-pills nav-fill mb-4" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="alumnos-tab" data-bs-toggle="tab" data-bs-target="#alumnos" type="button" role="tab">
-                Alumnos <span class="badge bg-secondary ms-1" th:text="${#lists.size(alumnos)}"></span>
+            <button class="nav-link active" id="academia-main-tab" data-bs-toggle="pill" data-bs-target="#academia-main" type="button" role="tab">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                <strong>ACADEMIA BROCAT</strong>
+                <small class="d-block">Gestión Educativa</small>
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profesores-tab" data-bs-toggle="tab" data-bs-target="#profesores" type="button" role="tab">
-                Profesores <span class="badge bg-secondary ms-1" th:text="${#lists.size(profesores)}"></span>
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#cursos" type="button" role="tab">
-                Cursos <span class="badge bg-secondary ms-1" th:text="${#lists.size(cursos)}"></span>
+            <button class="nav-link" id="atelier-main-tab" data-bs-toggle="pill" data-bs-target="#atelier-main" type="button" role="tab">
+                <i class="bi bi-scissors me-2"></i>
+                <strong>ATELIER BROCAT</strong>
+                <small class="d-block">Gestión de Citas</small>
             </button>
         </li>
     </ul>
 
-    <div class="tab-content" id="adminTabsContent">
-        <!-- Pestaña de Alumnos -->
-        <div class="tab-pane fade show active" id="alumnos" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center my-3">
-                <h4>Lista de Alumnos</h4>
-                <a href="/admin/alumnos/nuevo" class="btn btn-success">+ Nuevo Alumno</a>
-            </div>
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Teléfono</th>
-                        <th>DNI</th>
-                        <th>Curso</th>
-                        <th>Profesor</th>
-                        <th>Clases No Asistidas</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="alumno : ${alumnos}">
-                        <td th:text="${alumno.nombre}"></td>
-                        <td th:text="${alumno.apellidos}"></td>
-                        <td th:text="${alumno.telefono}"></td>
-                        <td th:text="${alumno.dni}"></td>
-                        <td th:text="${alumno.curso}"></td>
-                        <td th:text="${alumno.profesor}"></td>
-                        <td class="text-center">
-                            <span class="badge bg-warning" th:text="${ausenciasDinamicas[alumno.id]}"></span>
-                            <small class="text-muted d-block">ausencias actuales</small>
-                        </td>
-                        <td>
-                            <a th:href="@{/admin/alumnos/borrar/{id}(id=${alumno.id})}" 
-                               class="btn btn-danger btn-sm" 
-                               onclick="return confirm('¿Estás seguro de que quieres eliminar este alumno?')">
-                                Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(alumnos)}">
-                        <td colspan="8" class="text-center text-muted">No hay alumnos registrados</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="tab-content" id="mainTabsContent">
+        <!-- ===== SECCIÓN ACADEMIA BROCAT ===== -->
+        <div class="tab-pane fade show active" id="academia-main" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-mortarboard-fill me-2"></i>Academia BROCAT - Gestión Educativa</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Sub-pestañas para Academia -->
+                    <ul class="nav nav-tabs" id="academiaTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="alumnos-tab" data-bs-toggle="tab" data-bs-target="#alumnos" type="button" role="tab">
+                                <i class="bi bi-people me-1"></i>Alumnos 
+                                <span class="badge bg-secondary ms-1" th:text="${#lists.size(alumnos)}"></span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profesores-tab" data-bs-toggle="tab" data-bs-target="#profesores" type="button" role="tab">
+                                <i class="bi bi-person-badge me-1"></i>Profesores 
+                                <span class="badge bg-secondary ms-1" th:text="${#lists.size(profesores)}"></span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cursos-tab" data-bs-toggle="tab" data-bs-target="#cursos" type="button" role="tab">
+                                <i class="bi bi-book me-1"></i>Cursos 
+                                <span class="badge bg-secondary ms-1" th:text="${#lists.size(cursos)}"></span>
+                            </button>
+                        </li>
+                    </ul>
 
-        <!-- Pestaña de Profesores -->
-        <div class="tab-pane fade" id="profesores" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center my-3">
-                <h4>Lista de Profesores</h4>
-                <a href="/admin/profesores/nuevo" class="btn btn-primary">+ Nuevo Profesor</a>
-            </div>
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th width="5%">ID</th>
-                        <th width="25%">Profesor</th>
-                        <th width="20%">Contacto</th>
-                        <th width="30%">Cursos Asignados</th>
-                        <th width="20%">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="profesor : ${profesores}">
-                        <td>
-                            <span class="badge bg-secondary" th:text="${profesor.id}"></span>
-                        </td>
-                        <td>
-                            <div>
-                                <strong th:text="${profesor.nombre + ' ' + (profesor.apellidos ?: '')}"></strong>
+                    <div class="tab-content mt-3" id="academiaTabsContent">
+                        <!-- Pestaña de Alumnos -->
+                        <div class="tab-pane fade show active" id="alumnos" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center my-3">
+                                <h5>Lista de Alumnos</h5>
+                                <a href="/admin/alumnos/nuevo" class="btn btn-success">
+                                    <i class="bi bi-plus-circle me-1"></i>Nuevo Alumno
+                                </a>
                             </div>
-                        </td>
-                        <td>
-                            <div th:if="${profesor.email != null and !profesor.email.isEmpty()}">
-                                <small><i class="bi bi-envelope"></i> <span th:text="${profesor.email}"></span></small>
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Apellidos</th>
+                                        <th>Teléfono</th>
+                                        <th>DNI</th>
+                                        <th>Curso</th>
+                                        <th>Profesor</th>
+                                        <th>Clases No Asistidas</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="alumno : ${alumnos}">
+                                        <td th:text="${alumno.nombre}"></td>
+                                        <td th:text="${alumno.apellidos}"></td>
+                                        <td th:text="${alumno.telefono}"></td>
+                                        <td th:text="${alumno.dni}"></td>
+                                        <td th:text="${alumno.curso}"></td>
+                                        <td th:text="${alumno.profesor}"></td>
+                                        <td class="text-center">
+                                            <span class="badge bg-warning" th:text="${ausenciasDinamicas[alumno.id]}"></span>
+                                            <small class="text-muted d-block">ausencias actuales</small>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/alumnos/borrar/{id}(id=${alumno.id})}" 
+                                               class="btn btn-danger btn-sm" 
+                                               onclick="return confirm('¿Estás seguro de que quieres eliminar este alumno?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(alumnos)}">
+                                        <td colspan="8" class="text-center text-muted">No hay alumnos registrados</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pestaña de Profesores -->
+                        <div class="tab-pane fade" id="profesores" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center my-3">
+                                <h5>Lista de Profesores</h5>
+                                <a href="/admin/profesores/nuevo" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-1"></i>Nuevo Profesor
+                                </a>
                             </div>
-                            <div th:if="${profesor.telefono != null and !profesor.telefono.isEmpty()}">
-                                <small><i class="bi bi-telephone"></i> <span th:text="${profesor.telefono}"></span></small>
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="5%">ID</th>
+                                        <th width="25%">Profesor</th>
+                                        <th width="20%">Contacto</th>
+                                        <th width="30%">Cursos Asignados</th>
+                                        <th width="20%">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="profesor : ${profesores}">
+                                        <td>
+                                            <span class="badge bg-secondary" th:text="${profesor.id}"></span>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <strong th:text="${profesor.nombre + ' ' + (profesor.apellidos ?: '')}"></strong>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div th:if="${profesor.email != null and !profesor.email.isEmpty()}">
+                                                <small><i class="bi bi-envelope"></i> <span th:text="${profesor.email}"></span></small>
+                                            </div>
+                                            <div th:if="${profesor.telefono != null and !profesor.telefono.isEmpty()}">
+                                                <small><i class="bi bi-telephone"></i> <span th:text="${profesor.telefono}"></span></small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div th:if="${profesor.cursos != null and !profesor.cursos.isEmpty()}">
+                                                <div th:each="curso, iterStat : ${#strings.listSplit(profesor.cursos, ',')}" 
+                                                     class="mb-1">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="badge bg-primary me-2" 
+                                                              th:text="${#strings.trim(curso)}"></span>
+                                                        <small class="text-muted" 
+                                                               th:text="${cursosConHorarios[#strings.trim(curso)]}"></small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted" th:if="${profesor.cursos == null or profesor.cursos.isEmpty()}">
+                                                <i class="bi bi-exclamation-triangle"></i> Sin cursos asignados
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/profesores/editar/{id}(id=${profesor.id})}" 
+                                               class="btn btn-outline-primary btn-sm me-1" title="Editar profesor">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a th:href="@{/admin/profesores/borrar/{id}(id=${profesor.id})}" 
+                                               class="btn btn-danger btn-sm" 
+                                               onclick="return confirm('¿Estás seguro de que quieres eliminar este profesor?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(profesores)}">
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="bi bi-person display-4 text-muted"></i><br>
+                                            No hay profesores registrados<br>
+                                            <small>Haz clic en "+ Nuevo Profesor" para añadir el primero</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pestaña de Cursos -->
+                        <div class="tab-pane fade" id="cursos" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center my-3">
+                                <h5>Lista de Cursos</h5>
+                                <a href="/admin/cursos/nuevo" class="btn btn-warning">
+                                    <i class="bi bi-plus-circle me-1"></i>Nuevo Curso
+                                </a>
                             </div>
-                        </td>
-                        <td>
-                            <div th:if="${profesor.cursos != null and !profesor.cursos.isEmpty()}">
-                                <div th:each="curso, iterStat : ${#strings.listSplit(profesor.cursos, ',')}" 
-                                     class="mb-1">
-                                    <div class="d-flex align-items-center">
-                                        <span class="badge bg-primary me-2" 
-                                              th:text="${#strings.trim(curso)}"></span>
-                                        <small class="text-muted" 
-                                               th:text="${cursosConHorarios[#strings.trim(curso)]}"></small>
+                            <table class="table table-bordered table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="5%">ID</th>
+                                        <th width="35%">Nombre del Curso</th>
+                                        <th width="25%">Horario</th>
+                                        <th width="15%">Alumnos</th>
+                                        <th width="20%">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="curso : ${cursos}">
+                                        <td>
+                                            <span class="badge bg-secondary" th:text="${curso.id}"></span>
+                                        </td>
+                                        <td>
+                                            <strong th:text="${curso.nombre}"></strong>
+                                        </td>
+                                        <td>
+                                            <i class="bi bi-clock"></i>
+                                            <span th:text="${curso.horario}"></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <span class="badge bg-info me-2">
+                                                    <i class="bi bi-people"></i>
+                                                    <span th:text="${contadorAlumnosPorCurso[curso.nombre]}"></span>
+                                                </span>
+                                                <div class="progress flex-grow-1" style="height: 12px; max-width: 80px;">
+                                                    <div class="progress-bar bg-info" 
+                                                         th:style="'width: ' + ${#strings.substringBefore(contadorAlumnosPorCurso[curso.nombre], '/')} + '0%'">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">máx. 10</small>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/cursos/editar/{id}(id=${curso.id})}" 
+                                               class="btn btn-outline-primary btn-sm me-1">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a th:href="@{/admin/cursos/borrar/{id}(id=${curso.id})}" 
+                                               class="btn btn-danger btn-sm" 
+                                               onclick="return confirm('¿Estás seguro de que quieres eliminar este curso?')">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(cursos)}">
+                                        <td colspan="5" class="text-center text-muted py-4">
+                                            <i class="bi bi-book display-4 text-muted"></i><br>
+                                            No hay cursos registrados<br>
+                                            <small>Haz clic en "+ Nuevo Curso" para añadir el primero</small>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <!-- Información adicional -->
+                            <div class="alert alert-info mt-3" th:if="${!#lists.isEmpty(cursos)}">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <i class="bi bi-book"></i>
+                                        <strong>Total de cursos:</strong> 
+                                        <span th:text="${#lists.size(cursos)}"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <i class="bi bi-people"></i>
+                                        <strong>Capacidad total:</strong> 
+                                        <span th:text="${#lists.size(cursos)} * 10"></span> alumnos máximo
                                     </div>
                                 </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i>
+                                    Cada curso tiene un límite de 10 alumnos por grupo
+                                </small>
                             </div>
-                            <small class="text-muted" th:if="${profesor.cursos == null or profesor.cursos.isEmpty()}">
-                                <i class="bi bi-exclamation-triangle"></i> Sin cursos asignados
-                            </small>
-                        </td>
-                        <td>
-                            <a th:href="@{/admin/profesores/editar/{id}(id=${profesor.id})}" 
-                               class="btn btn-outline-primary btn-sm me-1" title="Editar profesor">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <a th:href="@{/admin/profesores/borrar/{id}(id=${profesor.id})}" 
-                               class="btn btn-danger btn-sm" 
-                               onclick="return confirm('¿Estás seguro de que quieres eliminar este profesor?')">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(profesores)}">
-                        <td colspan="4" class="text-center text-muted py-4">
-                            <i class="bi bi-person display-4 text-muted"></i><br>
-                            No hay profesores registrados<br>
-                            <small>Haz clic en "+ Nuevo Profesor" para añadir el primero</small>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Pestaña de Cursos -->
-        <div class="tab-pane fade" id="cursos" role="tabpanel">
-            <div class="d-flex justify-content-between align-items-center my-3">
-                <h4>Lista de Cursos</h4>
-                <a href="/admin/cursos/nuevo" class="btn btn-warning">+ Nuevo Curso</a>
-            </div>
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th width="5%">ID</th>
-                        <th width="35%">Nombre del Curso</th>
-                        <th width="25%">Horario</th>
-                        <th width="15%">Alumnos</th>
-                        <th width="20%">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="curso : ${cursos}">
-                        <td>
-                            <span class="badge bg-secondary" th:text="${curso.id}"></span>
-                        </td>
-                        <td>
-                            <strong th:text="${curso.nombre}"></strong>
-                        </td>
-                        <td>
-                            <i class="bi bi-clock"></i>
-                            <span th:text="${curso.horario}"></span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex align-items-center justify-content-center">
-                                <span class="badge bg-info me-2">
-                                    <i class="bi bi-people"></i>
-                                    <span th:text="${contadorAlumnosPorCurso[curso.nombre]}"></span>
-                                </span>
-                                <div class="progress flex-grow-1" style="height: 12px; max-width: 80px;">
-                                    <div class="progress-bar bg-info" 
-                                         th:style="'width: ' + ${#strings.substringBefore(contadorAlumnosPorCurso[curso.nombre], '/')} + '0%'">
-                                    </div>
-                                </div>
-                            </div>
-                            <small class="text-muted">máx. 10</small>
-                        </td>
-                        <td>
-                            <a th:href="@{/admin/cursos/editar/{id}(id=${curso.id})}" 
-                               class="btn btn-outline-primary btn-sm me-1">
-                                <i class="bi bi-pencil"></i> Editar
-                            </a>
-                            <a th:href="@{/admin/cursos/borrar/{id}(id=${curso.id})}" 
-                               class="btn btn-danger btn-sm" 
-                               onclick="return confirm('¿Estás seguro de que quieres eliminar este curso?')">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(cursos)}">
-                        <td colspan="5" class="text-center text-muted py-4">
-                            <i class="bi bi-book display-4 text-muted"></i><br>
-                            No hay cursos registrados<br>
-                            <small>Haz clic en "+ Nuevo Curso" para añadir el primero</small>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <!-- Información adicional -->
-            <div class="alert alert-info mt-3" th:if="${!#lists.isEmpty(cursos)}">
-                <div class="row">
-                    <div class="col-md-6">
-                        <i class="bi bi-book"></i>
-                        <strong>Total de cursos:</strong> 
-                        <span th:text="${#lists.size(cursos)}"></span>
-                    </div>
-                    <div class="col-md-6">
-                        <i class="bi bi-people"></i>
-                        <strong>Capacidad total:</strong> 
-                        <span th:text="${#lists.size(cursos)} * 10"></span> alumnos máximo
+                        </div>
                     </div>
                 </div>
-                <small class="text-muted">
-                    <i class="bi bi-info-circle"></i>
-                    Cada curso tiene un límite de 10 alumnos por grupo
-                </small>
+            </div>
+        </div>
+
+        <!-- ===== SECCIÓN ATELIER BROCAT ===== -->
+        <div class="tab-pane fade" id="atelier-main" role="tabpanel">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-scissors me-2"></i>Atelier BROCAT - Gestión de Citas Previas</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Sub-pestañas para Atelier -->
+                    <ul class="nav nav-tabs" id="atelierTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="citas-lista-tab" data-bs-toggle="tab" data-bs-target="#citas-lista" type="button" role="tab">
+                                <i class="bi bi-calendar-check me-1"></i>Citas Confirmadas
+                                <span class="badge bg-secondary ms-1" th:text="${#lists.size(citasConfirmadas) ?: 0}"></span>
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="citas-estadisticas-tab" data-bs-toggle="tab" data-bs-target="#citas-estadisticas" type="button" role="tab">
+                                <i class="bi bi-graph-up me-1"></i>Estadísticas
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="citas-horarios-tab" data-bs-toggle="tab" data-bs-target="#citas-horarios" type="button" role="tab">
+                                <i class="bi bi-clock me-1"></i>Horarios Atelier
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3" id="atelierTabsContent">
+                        <!-- Pestaña de Citas Confirmadas - Vista Calendario -->
+                        <div class="tab-pane fade show active" id="citas-lista" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center my-3">
+                                <h5>Calendario de Citas Atelier</h5>
+                                <div>
+                                    <button class="btn btn-outline-primary btn-sm me-2" onclick="actualizarCalendario()">
+                                        <i class="bi bi-arrow-clockwise"></i> Actualizar
+                                    </button>
+                                    <span class="badge bg-success">Vista Calendario</span>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Calendario -->
+                                <div class="col-lg-8">
+                                    <div class="card">
+                                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-calendar-month"></i>
+                                                <span id="mesActualTexto">Octubre 2025</span>
+                                            </h6>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-light" onclick="cambiarMes(-1)">
+                                                    <i class="bi bi-chevron-left"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-light" onclick="irHoy()">Hoy</button>
+                                                <button type="button" class="btn btn-outline-light" onclick="cambiarMes(1)">
+                                                    <i class="bi bi-chevron-right"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <!-- Calendario Grid -->
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mb-0" id="calendarioTabla">
+                                                    <thead class="table-light">
+                                                        <tr class="text-center">
+                                                            <th class="p-2">Lun</th>
+                                                            <th class="p-2">Mar</th>
+                                                            <th class="p-2">Mié</th>
+                                                            <th class="p-2">Jue</th>
+                                                            <th class="p-2">Vie</th>
+                                                            <th class="p-2">Sáb</th>
+                                                            <th class="p-2">Dom</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="calendarioBody">
+                                                        <!-- El calendario se genera dinámicamente -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Leyenda -->
+                                    <div class="mt-3">
+                                        <div class="row text-center">
+                                            <div class="col">
+                                                <span class="badge bg-success me-1">●</span>
+                                                <small>Con citas confirmadas</small>
+                                            </div>
+                                            <div class="col">
+                                                <span class="badge bg-warning me-1">●</span>
+                                                <small>Con citas pendientes</small>
+                                            </div>
+                                            <div class="col">
+                                                <span class="badge bg-primary me-1">●</span>
+                                                <small>Día seleccionado</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Panel lateral con citas del día seleccionado -->
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-calendar-day"></i>
+                                                Citas del <span id="fechaSeleccionada">Día Seleccionado</span>
+                                            </h6>
+                                        </div>
+                                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                                            <div id="citasDelDia">
+                                                <div class="text-center text-muted py-4">
+                                                    <i class="bi bi-calendar-check display-4"></i>
+                                                    <p class="mb-0">Selecciona un día en el calendario</p>
+                                                    <small>para ver las citas programadas</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Resumen del mes -->
+                                    <div class="card mt-3">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-graph-up"></i>
+                                                Resumen del Mes
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row text-center">
+                                                <div class="col-6">
+                                                    <h4 class="text-success mb-0" id="totalCitasConfirmadas">0</h4>
+                                                    <small>Confirmadas</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <h4 class="text-warning mb-0" id="totalCitasPendientes">0</h4>
+                                                    <small>Pendientes</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pestaña de Estadísticas -->
+                        <div class="tab-pane fade" id="citas-estadisticas" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-primary">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 class="card-title" th:text="${#lists.size(citasConfirmadas) ?: 0}">0</h4>
+                                                    <p class="card-text">Total Citas</p>
+                                                </div>
+                                                <i class="bi bi-calendar-check-fill display-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-success">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 class="card-title">100%</h4>
+                                                    <p class="card-text">Auto-confirmadas</p>
+                                                </div>
+                                                <i class="bi bi-check-circle-fill display-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-info">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 class="card-title">12</h4>
+                                                    <p class="card-text">Slots Diarios</p>
+                                                </div>
+                                                <i class="bi bi-clock-fill display-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card text-white bg-warning">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <div>
+                                                    <h4 class="card-title">0</h4>
+                                                    <p class="card-text">Pendientes</p>
+                                                </div>
+                                                <i class="bi bi-hourglass-split display-4"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5><i class="bi bi-info-circle me-2"></i>Información del Sistema</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-clock text-success"></i> Horarios Atelier:</h6>
+                                                    <ul class="list-unstyled ms-3">
+                                                        <li><strong>Mañana:</strong> 10:00 - 13:30</li>
+                                                        <li><strong>Tarde:</strong> 17:00 - 20:30</li>
+                                                        <li><strong>Intervalos:</strong> Cada 30 minutos</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <h6><i class="bi bi-gear text-primary"></i> Configuración:</h6>
+                                                    <ul class="list-unstyled ms-3">
+                                                        <li><i class="bi bi-check text-success"></i> Auto-confirmación activa</li>
+                                                        <li><i class="bi bi-calendar text-info"></i> Sin límite de fechas</li>
+                                                        <li><i class="bi bi-people text-warning"></i> Sistema independiente</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pestaña de Horarios Atelier -->
+                        <div class="tab-pane fade" id="citas-horarios" role="tabpanel">
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5><i class="bi bi-clock me-2"></i>Configuración de Horarios - Atelier BROCAT</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6 class="text-success"><i class="bi bi-sun me-2"></i>Horario de Mañana</h6>
+                                            <div class="card border-success">
+                                                <div class="card-body">
+                                                    <p><strong>Inicio:</strong> 10:00</p>
+                                                    <p><strong>Fin:</strong> 13:30</p>
+                                                    <p><strong>Slots disponibles:</strong> 7 slots</p>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <span class="badge bg-success">10:00</span>
+                                                        <span class="badge bg-success">10:30</span>
+                                                        <span class="badge bg-success">11:00</span>
+                                                        <span class="badge bg-success">11:30</span>
+                                                        <span class="badge bg-success">12:00</span>
+                                                        <span class="badge bg-success">12:30</span>
+                                                        <span class="badge bg-success">13:00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6 class="text-primary"><i class="bi bi-moon me-2"></i>Horario de Tarde</h6>
+                                            <div class="card border-primary">
+                                                <div class="card-body">
+                                                    <p><strong>Inicio:</strong> 17:00</p>
+                                                    <p><strong>Fin:</strong> 20:30</p>
+                                                    <p><strong>Slots disponibles:</strong> 7 slots</p>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <span class="badge bg-primary">17:00</span>
+                                                        <span class="badge bg-primary">17:30</span>
+                                                        <span class="badge bg-primary">18:00</span>
+                                                        <span class="badge bg-primary">18:30</span>
+                                                        <span class="badge bg-primary">19:00</span>
+                                                        <span class="badge bg-primary">19:30</span>
+                                                        <span class="badge bg-primary">20:00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="alert alert-info mt-3">
+                                        <h6><i class="bi bi-info-circle me-2"></i>Información Importante</h6>
+                                        <ul class="mb-0">
+                                            <li><strong>Sistema independiente:</strong> Los horarios del Atelier son completamente independientes de la Academia</li>
+                                            <li><strong>Intervalos fijos:</strong> Cada cita tiene una duración de 30 minutos</li>
+                                            <li><strong>Confirmación automática:</strong> No requiere aprobación manual</li>
+                                            <li><strong>Total slots por día:</strong> 14 slots disponibles (7 mañana + 7 tarde)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Script para Bootstrap tabs -->
+    <!-- Script para Bootstrap tabs y funcionalidad adicional -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales para el calendario
+        let fechaActual = new Date();
+        let citasDelMes = [];
+        let diaSeleccionado = null;
+
+        // Nombres de meses en español
+        const nombresMeses = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+
+        // Función para actualizar las citas desde el servidor
+        function actualizarCalendario() {
+            const boton = document.querySelector('button[onclick="actualizarCalendario()"]');
+            const iconoOriginal = boton.innerHTML;
+            
+            // Mostrar estado de carga
+            boton.innerHTML = '<i class="bi bi-arrow-clockwise spinner-border spinner-border-sm"></i> Actualizando...';
+            boton.disabled = true;
+            
+            // Cargar citas del mes actual
+            cargarCitasDelMes(fechaActual.getFullYear(), fechaActual.getMonth() + 1).finally(() => {
+                // Restaurar botón
+                boton.innerHTML = iconoOriginal;
+                boton.disabled = false;
+                
+                // Mostrar mensaje de éxito temporal
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-success ms-2';
+                badge.textContent = 'Actualizado';
+                boton.parentNode.appendChild(badge);
+                
+                setTimeout(() => {
+                    badge.remove();
+                }, 2000);
+            });
+        }
+
+        // Función para cargar citas del mes desde el servidor
+        async function cargarCitasDelMes(anio, mes) {
+            try {
+                const response = await fetch(`/admin/citas/mes/${anio}/${mes}`);
+                if (response.ok) {
+                    citasDelMes = await response.json();
+                    generarCalendario();
+                    actualizarResumenMes();
+                } else {
+                    console.error('Error al cargar citas del mes');
+                    citasDelMes = [];
+                }
+            } catch (error) {
+                console.error('Error de conexión:', error);
+                citasDelMes = [];
+            }
+        }
+
+        // Función para generar el calendario
+        function generarCalendario() {
+            const anio = fechaActual.getFullYear();
+            const mes = fechaActual.getMonth();
+            
+            // Actualizar título del mes
+            document.getElementById('mesActualTexto').textContent = `${nombresMeses[mes]} ${anio}`;
+            
+            // Obtener primer día del mes y días en el mes
+            const primerDia = new Date(anio, mes, 1);
+            const ultimoDia = new Date(anio, mes + 1, 0);
+            const diasEnMes = ultimoDia.getDate();
+            
+            // Ajustar para que lunes sea día 0
+            let diaSemanaInicio = (primerDia.getDay() + 6) % 7;
+            
+            const tbody = document.getElementById('calendarioBody');
+            tbody.innerHTML = '';
+            
+            let fecha = 1;
+            let semanaActual = 0;
+            
+            // Generar semanas
+            while (fecha <= diasEnMes || semanaActual === 0) {
+                const fila = document.createElement('tr');
+                
+                // Generar días de la semana
+                for (let diaSemana = 0; diaSemana < 7; diaSemana++) {
+                    const celda = document.createElement('td');
+                    celda.className = 'p-1 text-center calendar-day';
+                    celda.style.height = '60px';
+                    celda.style.cursor = 'pointer';
+                    celda.style.position = 'relative';
+                    celda.style.verticalAlign = 'top';
+                    
+                    if (semanaActual === 0 && diaSemana < diaSemanaInicio) {
+                        // Días del mes anterior (vacíos)
+                        celda.innerHTML = '';
+                        celda.style.backgroundColor = '#f8f9fa';
+                    } else if (fecha > diasEnMes) {
+                        // Días del mes siguiente (vacíos)
+                        celda.innerHTML = '';
+                        celda.style.backgroundColor = '#f8f9fa';
+                    } else {
+                        // Día actual del mes
+                        const fechaString = `${anio}-${(mes + 1).toString().padStart(2, '0')}-${fecha.toString().padStart(2, '0')}`;
+                        const citasDelDia = citasDelMes.filter(cita => cita.fechaPreferida === fechaString);
+                        
+                        celda.innerHTML = `<div class="fw-bold">${fecha}</div>`;
+                        celda.setAttribute('data-fecha', fechaString);
+                        celda.setAttribute('data-dia', fecha);
+                        
+                        // Agregar indicadores de citas
+                        if (citasDelDia.length > 0) {
+                            const confirmadas = citasDelDia.filter(c => c.estado === 'CONFIRMADA').length;
+                            const pendientes = citasDelDia.filter(c => c.estado === 'PENDIENTE').length;
+                            
+                            let indicadores = '';
+                            if (confirmadas > 0) {
+                                indicadores += `<span class="badge bg-success" style="font-size: 0.6em;">${confirmadas}</span> `;
+                            }
+                            if (pendientes > 0) {
+                                indicadores += `<span class="badge bg-warning" style="font-size: 0.6em;">${pendientes}</span>`;
+                            }
+                            
+                            celda.innerHTML += `<div style="position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);">${indicadores}</div>`;
+                        }
+                        
+                        // Resaltar día actual
+                        const hoy = new Date();
+                        if (anio === hoy.getFullYear() && mes === hoy.getMonth() && fecha === hoy.getDate()) {
+                            celda.style.backgroundColor = '#e3f2fd';
+                        }
+                        
+                        // Evento click
+                        celda.addEventListener('click', () => seleccionarDia(fechaString, fecha));
+                        
+                        fecha++;
+                    }
+                    
+                    fila.appendChild(celda);
+                }
+                
+                tbody.appendChild(fila);
+                semanaActual++;
+                
+                if (fecha > diasEnMes) break;
+            }
+        }
+
+        // Función para seleccionar un día
+        async function seleccionarDia(fechaString, dia) {
+            // Remover selección anterior
+            document.querySelectorAll('.calendar-day').forEach(celda => {
+                celda.style.backgroundColor = '';
+                if (celda.getAttribute('data-dia') === new Date().getDate().toString() &&
+                    fechaActual.getMonth() === new Date().getMonth() &&
+                    fechaActual.getFullYear() === new Date().getFullYear()) {
+                    celda.style.backgroundColor = '#e3f2fd'; // Mantener día actual resaltado
+                }
+            });
+            
+            // Resaltar día seleccionado
+            const celdaSeleccionada = document.querySelector(`[data-fecha="${fechaString}"]`);
+            if (celdaSeleccionada) {
+                celdaSeleccionada.style.backgroundColor = '#007bff';
+                celdaSeleccionada.style.color = 'white';
+            }
+            
+            diaSeleccionado = fechaString;
+            
+            // Actualizar título del panel lateral
+            const fecha = new Date(fechaString);
+            const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('fechaSeleccionada').textContent = fechaFormateada;
+            
+            // Cargar citas del día
+            await cargarCitasDelDia(fechaString);
+        }
+
+        // Función para cargar citas de un día específico
+        async function cargarCitasDelDia(fecha) {
+            const contenedor = document.getElementById('citasDelDia');
+            contenedor.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Cargando citas...</div>';
+            
+            try {
+                const response = await fetch(`/admin/citas/fecha/${fecha}`);
+                if (response.ok) {
+                    const citas = await response.json();
+                    mostrarCitasDelDia(citas);
+                } else {
+                    contenedor.innerHTML = '<div class="text-center text-danger"><i class="bi bi-exclamation-triangle"></i> Error al cargar citas</div>';
+                }
+            } catch (error) {
+                console.error('Error al cargar citas del día:', error);
+                contenedor.innerHTML = '<div class="text-center text-danger"><i class="bi bi-wifi-off"></i> Error de conexión</div>';
+            }
+        }
+
+        // Función para mostrar las citas del día seleccionado
+        function mostrarCitasDelDia(citas) {
+            const contenedor = document.getElementById('citasDelDia');
+            
+            if (citas.length === 0) {
+                contenedor.innerHTML = `
+                    <div class="text-center text-muted py-3">
+                        <i class="bi bi-calendar-x display-6"></i>
+                        <p class="mb-0">Sin citas programadas</p>
+                        <small>No hay citas para este día</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Ordenar citas por hora
+            citas.sort((a, b) => {
+                const horaA = a.horaPreferida || '00:00';
+                const horaB = b.horaPreferida || '00:00';
+                return horaA.localeCompare(horaB);
+            });
+            
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" style="width: 20%;">Hora</th>
+                                <th style="width: 35%;">Cliente</th>
+                                <th style="width: 25%;">Teléfono</th>
+                                <th style="width: 20%;">Servicio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            citas.forEach((cita, index) => {
+                const estadoClass = cita.estado === 'CONFIRMADA' ? 'success' : 
+                                  cita.estado === 'PENDIENTE' ? 'warning' : 'danger';
+                
+                // Formatear el tipo de servicio para que sea más legible
+                const tipoServicioFormateado = formatearTipoServicio(cita.tipoServicio);
+                
+                html += `
+                    <tr class="border-start border-4 border-${estadoClass}">
+                        <td class="text-center fw-bold text-primary">
+                            <i class="bi bi-clock me-1"></i>
+                            ${cita.horaPreferida || 'Sin especificar'}
+                        </td>
+                        <td>
+                            <div class="fw-bold">${cita.nombre}</div>
+                            <small class="text-muted">
+                                <span class="badge bg-${estadoClass} bg-opacity-10 text-${estadoClass}">${cita.estado}</span>
+                            </small>
+                        </td>
+                        <td>
+                            <span class="text-dark">
+                                <i class="bi bi-telephone me-1"></i>
+                                ${cita.telefono}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info bg-opacity-25 text-info">
+                                ${tipoServicioFormateado}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-2 text-center">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Total: ${citas.length} cita${citas.length !== 1 ? 's' : ''}
+                    </small>
+                </div>
+            `;
+            
+            contenedor.innerHTML = html;
+        }
+        
+        // Función auxiliar para formatear el tipo de servicio
+        function formatearTipoServicio(tipoServicio) {
+            const servicios = {
+                'arreglos': 'Arreglos',
+                'costura-personalizada': 'Costura',
+                'proyecto-especial': 'Proyecto',
+                'consultoria': 'Consultoría',
+                'otro': 'Otro',
+                'Arreglo de ropa': 'Arreglos',
+                'Costura creativa': 'Costura',
+                'Bordado personalizado': 'Bordado',
+                'Reparación de tapicería': 'Tapicería',
+                'Consulta de diseño': 'Consultoría'
+            };
+            
+            return servicios[tipoServicio] || tipoServicio;
+        }
+
+        // Función para cambiar mes
+        function cambiarMes(direccion) {
+            fechaActual.setMonth(fechaActual.getMonth() + direccion);
+            cargarCitasDelMes(fechaActual.getFullYear(), fechaActual.getMonth() + 1);
+        }
+
+        // Función para ir al mes actual
+        function irHoy() {
+            fechaActual = new Date();
+            cargarCitasDelMes(fechaActual.getFullYear(), fechaActual.getMonth() + 1);
+        }
+
+        // Función para actualizar el resumen del mes
+        function actualizarResumenMes() {
+            const confirmadas = citasDelMes.filter(c => c.estado === 'CONFIRMADA').length;
+            const pendientes = citasDelMes.filter(c => c.estado === 'PENDIENTE').length;
+            
+            document.getElementById('totalCitasConfirmadas').textContent = confirmadas;
+            document.getElementById('totalCitasPendientes').textContent = pendientes;
+        }
+        
+        // Inicialización cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Activar tooltips de Bootstrap si los hay
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Configurar el cambio de pestañas principales
+            const mainTabs = document.querySelectorAll('#mainTabs button[data-bs-toggle="pill"]');
+            mainTabs.forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function (e) {
+                    const targetId = e.target.getAttribute('data-bs-target');
+                    console.log('Cambiado a pestaña:', targetId);
+                    
+                    // Puedes agregar lógica específica para cada pestaña aquí
+                    if (targetId === '#atelier-main') {
+                        // Lógica específica para cuando se abre la sección Atelier
+                        console.log('Sección Atelier activada');
+                        // Cargar calendario cuando se abre la pestaña por primera vez
+                        setTimeout(() => {
+                            if (document.getElementById('calendarioBody').children.length === 0) {
+                                cargarCitasDelMes(fechaActual.getFullYear(), fechaActual.getMonth() + 1);
+                            }
+                        }, 100);
+                    } else if (targetId === '#academia-main') {
+                        // Lógica específica para cuando se abre la sección Academia
+                        console.log('Sección Academia activada');
+                    }
+                });
+            });
+            
+            // Cargar calendario inicial si la pestaña Atelier está activa
+            setTimeout(() => {
+                const atelierTab = document.getElementById('atelier-main');
+                if (atelierTab && atelierTab.classList.contains('active')) {
+                    cargarCitasDelMes(fechaActual.getFullYear(), fechaActual.getMonth() + 1);
+                }
+            }, 500);
+        });
+    </script>
 </div>
 </body>
 </html>

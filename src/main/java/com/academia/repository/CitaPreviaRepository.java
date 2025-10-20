@@ -23,4 +23,7 @@ public interface CitaPreviaRepository extends JpaRepository<CitaPrevia, Long> {
     
     // Buscar citas por fecha preferida (para verificar disponibilidad de horas)
     List<CitaPrevia> findByFechaPreferida(LocalDate fechaPreferida);
+    
+    // Buscar citas en un rango de fechas (para el calendario)
+    List<CitaPrevia> findByFechaPreferidaBetween(LocalDate fechaInicio, LocalDate fechaFin);
 }

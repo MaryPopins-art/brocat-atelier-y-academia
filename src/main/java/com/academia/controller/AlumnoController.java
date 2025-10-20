@@ -174,7 +174,7 @@ public class AlumnoController {
         } else {
             // Login fallido
             System.out.println("❌ LOGIN FALLIDO - Alumno no encontrado");
-            model.addAttribute("error", "Nombre o DNI incorrectos. Verifica tus datos.");
+            model.addAttribute("error", "Usuario o contraseña incorrectos. Verifica tus datos.");
             return "alumno-login";
         }
     }
@@ -698,6 +698,87 @@ public class AlumnoController {
         model.addAttribute("recuperaciones", recuperacionesAlumno);
         
         return "alumno-recuperaciones";
+    }
+    
+    // Mostrar formulario para cambiar contraseña
+    @GetMapping("/cambiar-password")
+    public String mostrarCambiarPassword(HttpSession session, Model model) {
+        // Verificar autenticación
+        if (!isAuthenticated(session)) {
+            return "redirect:/alumno/login";
+        }
+        
+        Alumno alumnoActual = (Alumno) session.getAttribute("alumnoActual");
+        model.addAttribute("alumno", alumnoActual);
+        
+        return "alumno-cambiar-password";
+    }
+    
+    // Procesar cambio de contraseña
+    @PostMapping("/cambiar-password")
+    public String procesarCambioPassword(@RequestParam String passwordActual,
+                                        @RequestParam String passwordNueva,
+                                        @RequestParam String confirmarPassword,
+                                        HttpSession session,
+                                        RedirectAttributes redirectAttributes) {
+        // Verificar autenticación
+        if (!isAuthenticated(session)) {
+            return "redirect:/alumno/login";
+        }
+        
+        Alumno alumnoActual = (Alumno) session.getAttribute("alumnoActual");
+        
+        try {
+            // Validar contraseña actual
+            if (!alumnoActual.dni.equals(passwordActual)) {
+                redirectAttributes.addFlashAttribute("error", "La contraseña actual es incorrecta.");
+                return "redirect:/alumno/cambiar-password";
+            }
+            
+            // Validar que las nuevas contraseñas coincidan
+            if (!passwordNueva.equals(confirmarPassword)) {
+                redirectAttributes.addFlashAttribute("error", "Las nuevas contraseñas no coinciden.");
+                return "redirect:/alumno/cambiar-password";
+            }
+            
+            // Validar que la nueva contraseña no esté vacía y tenga al menos 3 caracteres
+            if (passwordNueva == null || passwordNueva.trim().length() < 3) {
+                redirectAttributes.addFlashAttribute("error", "La nueva contraseña debe tener al menos 3 caracteres.");
+                return "redirect:/alumno/cambiar-password";
+            }
+            
+            // Validar que la nueva contraseña sea diferente a la actual
+            if (passwordNueva.equals(alumnoActual.dni)) {
+                redirectAttributes.addFlashAttribute("error", "La nueva contraseña debe ser diferente a la actual.");
+                return "redirect:/alumno/cambiar-password";
+            }
+            
+            // Cambiar la contraseña (actualizar DNI)
+            String dniAnterior = alumnoActual.dni;
+            alumnoActual.dni = passwordNueva.trim();
+            
+            // Actualizar en la lista de alumnos
+            for (int i = 0; i < alumnos.size(); i++) {
+                if (alumnos.get(i).id.equals(alumnoActual.id)) {
+                    alumnos.set(i, alumnoActual);
+                    break;
+                }
+            }
+            
+            // Actualizar en la sesión
+            session.setAttribute("alumnoActual", alumnoActual);
+            
+            System.out.println("✅ Contraseña cambiada exitosamente para alumno: " + alumnoActual.nombre + 
+                              " (ID: " + alumnoActual.id + ") - De: '" + dniAnterior + "' a: '" + passwordNueva + "'");
+            
+            redirectAttributes.addFlashAttribute("success", "¡Contraseña cambiada exitosamente! Recuerda usar tu nueva contraseña en futuros inicios de sesión.");
+            return "redirect:/alumno/panel";
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error al cambiar contraseña para alumno: " + alumnoActual.nombre + " - " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Ocurrió un error al cambiar la contraseña. Inténtalo de nuevo.");
+            return "redirect:/alumno/cambiar-password";
+        }
     }
     
     // Método para obtener cursos con plazas libres para recuperación
